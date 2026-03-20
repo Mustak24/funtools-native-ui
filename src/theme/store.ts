@@ -20,7 +20,10 @@ const { useStore, useHandlers } = createStore({
     },
 
     updateThemeColor(state, color: ColorState, val: [r: number, g: number, b: number]) {
-      state.colors[color] = val.join(', ') as Color;
+      state.colors = {
+        ...state.colors,
+        [color]: val.join(', ') as Color,
+      };
     }
   },
 });

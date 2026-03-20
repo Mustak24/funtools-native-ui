@@ -14,7 +14,10 @@ import { getButtonStyle } from "../utils";
 import { ButtonVariant } from "../types";
 import { Color, useThemeStore } from "@theme";
 
-export type ButtonProp = Omit<RippleContainerProps, "rippleColor" | "rippleScale"> & {
+export type ButtonProp = Omit<
+    RippleContainerProps,
+    "rippleColor" | "rippleScale"
+> & {
     title: string;
 
     startIcon?: IconName;
@@ -40,8 +43,7 @@ export function Button({
     fontSize = 16,
     ...props
 }: ButtonProp) {
-
-    const theme = useThemeStore(({colors}) => {
+    const theme = useThemeStore(({ colors }) => {
         if (["text", "bg"].includes(color ?? "")) {
             return {
                 bgColor: colors[color],
@@ -55,9 +57,13 @@ export function Button({
         };
     });
 
-    const { text, bg, border } = getButtonStyle({variant, text: theme.textColor, bg: theme.bgColor});
-
-    console.log({theme, bg, text})
+    const { text, bg, border } = useMemo(() => {
+        return getButtonStyle({
+            variant,
+            text: theme.textColor,
+            bg: theme.bgColor,
+        });
+    }, [theme, variant]);
 
     return (
         <RippleContainer
@@ -78,7 +84,7 @@ export function Button({
                 borderWidth: 1,
                 ...style,
 
-                opacity: disabled ? 0.8 : 1
+                opacity: disabled ? 0.8 : 1,
             }}
         >
             <ShowWhen

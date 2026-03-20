@@ -34,7 +34,7 @@ export function IconButton({
     disabled = false,
     ...props
 }: IconButtonProps) {
-     const theme = useThemeStore(({colors}) => {
+    const theme = useThemeStore(({ colors }) => {
         if (["text", "bg"].includes(color ?? "")) {
             return {
                 bgColor: colors[color],
@@ -48,7 +48,13 @@ export function IconButton({
         };
     });
 
-    const { text, bg, border } = getButtonStyle({variant, text: theme.textColor, bg: theme.bgColor});
+    const { text, bg, border } = useMemo(() => {
+        return getButtonStyle({
+            variant,
+            text: theme.textColor,
+            bg: theme.bgColor,
+        });
+    }, [theme, variant]);
 
     return (
         <RippleContainer
