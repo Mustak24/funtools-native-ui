@@ -13,7 +13,7 @@ const { useStore, useHandlers } = createStore({
       state.theme = state.theme === 'dark' ? 'light' : 'dark';
       state.colors = _colors[state.theme];
       onToggle?.(state.theme);
-    },
+    }
   },
 });
 

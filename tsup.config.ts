@@ -2,7 +2,7 @@ import { defineConfig } from 'tsup';
 
 export default defineConfig({
   entry: {
-    'theme/index': './src/theme/index.ts',
+    'theme/index': './src/theme/store.ts',
     'core/index': './src/core/index.ts',
     'components/index': './src/components/index.ts',
     'ui/index': './src/ui/index.ts',

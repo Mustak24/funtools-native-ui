@@ -4,6 +4,7 @@ import { CenterModalProps } from "@core";
 import { ThemeText } from "@core";
 import { Permission, PermissionsAndroid, PermissionStatus, View } from "react-native";
 import getPermissionInfo from "./getPermissionInfo";
+import { Button } from "@components";
 
 
 export type PermissionModalProps = Omit<CenterModalProps, 'children' | 'preventCloseRequest'> & {
@@ -33,7 +34,8 @@ export function PermissionModal({ permission, requestPermission, onDeny, permiss
                 </View>
 
                 <View style={{flexDirection: 'row', gap: 8, alignItems: 'center', justifyContent: 'flex-end', width: '100%'}} >
-                    {/* <Button
+                    <Button
+                        color="primary" variant="solid"
                         title={permissionStatus === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN ? 'Settings' : 'Allow'} 
                         onPress={requestPermission} 
                     />
@@ -42,7 +44,7 @@ export function PermissionModal({ permission, requestPermission, onDeny, permiss
                         title="Deny" 
                         onPress={onDeny} 
                         variant="outlined" color="text" 
-                    /> */}
+                    />
                 </View>
             </View>
         </CenterModal>

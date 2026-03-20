@@ -1,25 +1,34 @@
 import React from "react";
-import * as icons from 'lucide-react-native';
+import * as icons from "lucide-react-native";
 import { LucideProps } from "lucide-react-native";
 import { useThemeStore } from "@theme";
-import { type ColorStates } from "@theme";
-
+import { type ColorState } from "@theme";
+import { toRgba } from "@shared/utils/theme.utils";
 
 export type IconName = keyof typeof icons;
 
 export type IconProps = LucideProps & {
-  name: IconName,
-  
-  size?: number,
-  color?: ColorStates,
-  customColor?: string,
-}
+    name: IconName;
 
-export function Icon({name, size=16, color='text', customColor, ...props}: IconProps){
+    size?: number;
+    color?: ColorState;
+    alpha?: number;
+    customColor?: string;
+};
 
-  const colors = useThemeStore(states => customColor ?? states.colors[color])
+export function Icon({
+    name,
+    size = 16,
+    color = "text",
+    alpha = 100,
+    customColor,
+    ...props
+}: IconProps) {
+    const colors = useThemeStore((states) => {
+        return customColor ?? toRgba(states.colors[color], alpha);
+    });
 
-  const LucideIcon = icons[name] as React.ComponentType<LucideProps>;
+    const LucideIcon = icons[name] as React.ComponentType<LucideProps>;
 
-  return <LucideIcon {...props} color={colors} size={size} />;
+    return <LucideIcon {...props} color={colors} size={size} />;
 }
