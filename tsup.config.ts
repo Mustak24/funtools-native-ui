@@ -2,7 +2,7 @@ import { defineConfig } from 'tsup';
 
 export default defineConfig({
   entry: {
-    'theme/index': './src/theme/store.ts',
+    'theme/index': './src/theme/build.export.ts',
     'core/index': './src/core/index.ts',
     'components/index': './src/components/index.ts',
     'ui/index': './src/ui/index.ts',
@@ -13,6 +13,6 @@ export default defineConfig({
   splitting: false,
   sourcemap: true,
   clean: true,
-  external: ['react', 'react-native'],
+  external: ['react', 'react-native', '@funtools/store', 'react-native-safe-area-context', 'lucide-react-native'],
   treeshake: true,
 });

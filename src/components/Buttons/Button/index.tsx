@@ -12,8 +12,9 @@ import {
 import { SpinnerLoader, type SpinnerLoaderProps } from "@components";
 import { getButtonStyle } from "../utils";
 import { ButtonVariant } from "../types";
+import { Color, useThemeStore } from "@theme";
 
-type ButtonProp = Omit<RippleContainerProps, "rippleColor" | "rippleScale"> & {
+export type ButtonProp = Omit<RippleContainerProps, "rippleColor" | "rippleScale"> & {
     title: string;
 
     startIcon?: IconName;
@@ -32,7 +33,6 @@ export function Button({
     endIcon,
     variant = "soft",
     color = "primary",
-    rounded,
     loading = false,
     loaderName,
     style,
@@ -40,10 +40,24 @@ export function Button({
     fontSize = 16,
     ...props
 }: ButtonProp) {
-    
-    const { text, bg, border } = useMemo(() => {
-        return getButtonStyle(color, variant);
-    }, [color, variant]);
+
+    const theme = useThemeStore(({colors}) => {
+        if (["text", "bg"].includes(color ?? "")) {
+            return {
+                bgColor: colors[color],
+                textColor: colors[color === "text" ? "bg" : "text"],
+            };
+        }
+
+        return {
+            bgColor: colors[color],
+            textColor: "255, 255, 255" as Color,
+        };
+    });
+
+    const { text, bg, border } = getButtonStyle({variant, text: theme.textColor, bg: theme.bgColor});
+
+    console.log({theme, bg, text})
 
     return (
         <RippleContainer
@@ -58,9 +72,13 @@ export function Button({
                 gap: Math.floor(fontSize / 2),
                 alignItems: "center",
                 justifyContent: "center",
+                paddingInline: 12,
+                height: 40,
+                borderRadius: 12,
+                borderWidth: 1,
                 ...style,
 
-                opacity: disabled ? 0.8 : 1,
+                opacity: disabled ? 0.8 : 1
             }}
         >
             <ShowWhen

@@ -9,6 +9,7 @@ import {
 import { SpinnerLoader, type SpinnerLoaderProps } from "@components";
 import { getButtonStyle } from "../utils";
 import { ButtonVariant } from "../types";
+import { Color, useThemeStore } from "@theme";
 
 export type IconButtonProps = RippleContainerProps & {
     icon: IconName;
@@ -21,7 +22,7 @@ export type IconButtonProps = RippleContainerProps & {
     loaderName?: SpinnerLoaderProps["name"];
 };
 
-export default function IconButton({
+export function IconButton({
     variant = "soft",
     color = "primary",
     icon,
@@ -33,9 +34,21 @@ export default function IconButton({
     disabled = false,
     ...props
 }: IconButtonProps) {
-    const { text, bg, border } = useMemo(() => {
-        return getButtonStyle(color, variant);
-    }, [color, variant]);
+     const theme = useThemeStore(({colors}) => {
+        if (["text", "bg"].includes(color ?? "")) {
+            return {
+                bgColor: colors[color],
+                textColor: colors[color === "text" ? "bg" : "text"],
+            };
+        }
+
+        return {
+            bgColor: colors[color],
+            textColor: "255, 255, 255" as Color,
+        };
+    });
+
+    const { text, bg, border } = getButtonStyle({variant, text: theme.textColor, bg: theme.bgColor});
 
     return (
         <RippleContainer

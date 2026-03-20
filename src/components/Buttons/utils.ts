@@ -4,26 +4,7 @@ import { toRgba } from "@shared/utils/theme.utils";
 
 
 
-export function getButtonStyle(color: ColorState, variant: ButtonVariant, {text, bg}: {text?: Color, bg?: Color} = {}) {
-    const theme = useThemeStore(({colors}) => {
-        if (["text", "bg"].includes(color ?? "")) {
-            return {
-                bgColor: colors[color],
-                textColor: colors[color === "text" ? "bg" : "text"],
-            };
-        }
-
-        return {
-            bgColor: colors[color],
-            textColor: "255, 255, 255" as Color,
-        };
-        
-    });
-
-    text ??= theme.textColor;
-    bg ??= theme.bgColor;
-
-
+export function getButtonStyle({text, bg, variant}: {text: Color, bg: Color, variant: ButtonVariant}) {
     if(variant === 'solid') return {text: toRgba(text), bg: toRgba(bg), border: toRgba(bg)};
 
     if(variant === 'outlined') return {text: toRgba(bg), bg: 'transparent', border: toRgba(bg)};

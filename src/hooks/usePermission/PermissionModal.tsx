@@ -1,6 +1,5 @@
 import { CenterModal } from "@core";
 import { CenterModalProps } from "@core";
-// import { Button } from "@ui";
 import { ThemeText } from "@core";
 import { Permission, PermissionsAndroid, PermissionStatus, View } from "react-native";
 import getPermissionInfo from "./getPermissionInfo";
@@ -12,11 +11,12 @@ export type PermissionModalProps = Omit<CenterModalProps, 'children' | 'preventC
     permission: Permission
     permissionStatus: PermissionStatus;
     requestPermission: () => void;
+    description?: string;
 }
 
-export function PermissionModal({ permission, requestPermission, onDeny, permissionStatus, ...props }: PermissionModalProps) {
+export function PermissionModal({ permission, requestPermission, onDeny, permissionStatus, description, ...props }: PermissionModalProps) {
 
-    const { description } = getPermissionInfo(permission);
+    const info = getPermissionInfo(permission);
 
     return (
         <CenterModal {...props}
@@ -29,7 +29,7 @@ export function PermissionModal({ permission, requestPermission, onDeny, permiss
                     </ThemeText>
 
                     <ThemeText color="text-secondary" style={{fontSize: 16, textAlign: 'center', paddingHorizontal: 8}} >
-                        {description}
+                        {description ?? info.description}
                     </ThemeText>
                 </View>
 
