@@ -21,7 +21,6 @@
       "@core": ["./src/core/index.ts"],
       "@theme": ["./src/theme/index.ts"],
       "@components": ["./src/components/index.ts"],
-      "@ui": ["./src/ui/index.ts"],
       "@hooks": ["./src/hooks/index.ts"],
       "@shared/*": ["./src/shared/*"]
     },

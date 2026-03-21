@@ -1,6 +1,6 @@
 {
   "name": "@funtools/native-ui",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "UI component library for React Native",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -30,12 +30,6 @@
       "require": "./dist/components/index.js",
       "default": "./dist/components/index.js"
     },
-    "./ui": {
-      "types": "./dist/ui/index.d.ts",
-      "import": "./dist/ui/index.mjs",
-      "require": "./dist/ui/index.js",
-      "default": "./dist/ui/index.js"
-    },
     "./hooks": {
       "types": "./dist/hooks/index.d.ts",
       "import": "./dist/hooks/index.mjs",
@@ -48,7 +42,8 @@
   ],
   "scripts": {
     "build": "tsup",
-    "dev": "chokidar \"src/**/*\" -c \"npm run build && yalc push\" --polling",
+    "dev:yalc": "chokidar \"src/**/*\" -c \"npm run build && yalc push\" --polling",
+    "dev:npm": "chokidar \"src/**/*\" -c \"npm run build && npm link\" --polling",
     "lint": "eslint src --ext .ts,.tsx"
   },
   "peerDependencies": {

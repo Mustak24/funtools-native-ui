@@ -1,45 +1,97 @@
-import { RANGE } from "@shared/types/number.type"
-import { Icon, type IconName, ShowWhen, RippleContainer, type RippleContainerProps } from "@core"
-import { SpinnerLoader, type SpinnerLoaderProps } from "@components"
-import { BUTTON_LAYOUT } from "../utils/constance"
-import { getButtonStyle } from "../utils/functions"
-import { ButtonSize, ButtonVariants } from "../utils/types"
-
+import { useMemo } from "react";
+import {
+    Icon,
+    type IconName,
+    ShowWhen,
+    RippleContainer,
+    type RippleContainerProps,
+} from "@core";
+import { SpinnerLoader, type SpinnerLoaderProps } from "@components";
+import { getButtonStyle } from "../utils";
+import { ButtonVariant } from "../types";
+import { useThemeStore } from "@theme";
+import { toRgba } from "@shared/utils/theme.utils";
 
 export type IconButtonProps = RippleContainerProps & {
-    icon: IconName,
-    
-    variant?: ButtonVariants,
-    size?: number | ButtonSize,
-    rounded?: number | `${RANGE<0, 100>}%`,
-    loading?: boolean,
-    loaderName?: SpinnerLoaderProps['name']
-}
+    icon: IconName;
 
-export default function IconButton({variant='soft', color='primary', icon, size='md', rounded='50%', loading=false, loaderName, disabled=false, ...props}: IconButtonProps) {
+    variant?: ButtonVariant;
+    size?: number;
+    iconSize?: number;
+    rounded?: number;
+    loading?: boolean;
+    loaderName?: SpinnerLoaderProps["name"];
+};
 
-    const {color: textColor, ...style} = getButtonStyle(variant, color);
+export function IconButton({
+    variant = "soft",
+    color = "primary",
+    icon,
+    size = 40,
+    iconSize,
+    rounded = 40,
+    loading = false,
+    loaderName,
+    disabled = false,
+    ...props
+}: IconButtonProps) {
+    const theme = useThemeStore(({ colors }) => {
+        if (["text", "bg"].includes(color ?? "")) {
+            return {
+                bgColor: colors[color],
+                textColor: colors[color === "text" ? "bg" : "text"],
+            };
+        }
 
-    const height = typeof size === 'number' ? size : BUTTON_LAYOUT[size].height;
-    const borderWidth = !variant.includes('outline') ? 0 : typeof size === 'number' ? 1 : BUTTON_LAYOUT[size].borderWidth;
+        return {
+            bgColor: colors[color],
+            textColor: "rgb(255, 255, 255)",
+        };
+    });
+
+    const { text, bg, border } = useMemo(() => {
+        return getButtonStyle({
+            variant,
+            text: toRgba(theme.textColor),
+            bg: toRgba(theme.bgColor),
+        });
+    }, [theme, variant]);
+
     return (
-        <RippleContainer {...props}
+        <RippleContainer
+            {...props}
             disabled={disabled}
             rippleScale={2}
-            rippleColor={textColor}
+            rippleColor={text}
             style={{
-                ...style, 
                 opacity: disabled ? 0.8 : 1,
-                height, borderRadius: rounded, borderWidth, alignItems: 'center', justifyContent: 'center', aspectRatio: 1, 
+                height: size,
+                width: size,
+                aspectRatio: 1,
+                borderRadius: rounded,
+                borderWidth: 1,
+                borderColor: border,
+                backgroundColor: bg,
+                alignItems: "center",
+                justifyContent: "center",
             }}
         >
-            <ShowWhen when={!loading} 
+            <ShowWhen
+                when={!loading}
                 otherwise={
-                    <SpinnerLoader name={loaderName} size={Math.floor(height * 0.6)} customColor={textColor} />
+                    <SpinnerLoader
+                        name={loaderName}
+                        size={iconSize ?? Math.floor(size * 0.6)}
+                        customColor={text}
+                    />
                 }
             >
-                <Icon customColor={textColor} name={icon} size={Math.floor(height * 0.6)} />
+                <Icon
+                    customColor={text}
+                    name={icon}
+                    size={iconSize ?? Math.floor(size * 0.6)}
+                />
             </ShowWhen>
         </RippleContainer>
-    )
+    );
 }
