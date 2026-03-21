@@ -6,10 +6,6 @@ A UI component library for React Native with theme-aware components, ripple inte
 
 ```bash
 npm install @funtools/native-ui
-# or
-yarn add @funtools/native-ui
-# or
-pnpm add @funtools/native-ui
 ```
 
 ### Peer dependencies
@@ -31,12 +27,12 @@ npm install react react-native react-native-safe-area-context @funtools/store lu
 ```tsx
 import React from 'react';
 import { SafeAreaView } from 'react-native';
-import { ThemeView, ThemeText, Button, IconButton, Input, SpinnerLoader, Icon } from '@funtools/native-ui';
-import { useThemeStore, useThemeHandlers } from '@funtools/native-ui/theme';
+import { ThemeView, ThemeText, Icon } from '@funtools/native-ui/core';
+import { Button, IconButton, Input, SpinnerLoader } from '@funtools/native-ui/components';
+import { useThemeStore, toggleTheme } from '@funtools/native-ui/theme';
 
 export default function App() {
   const theme = useThemeStore(state => state.theme);
-  const toggleTheme = useThemeHandlers().toggleTheme;
 
   return (
     <ThemeView style={{ flex: 1, padding: 16 }}>
@@ -51,8 +47,6 @@ export default function App() {
 ```
 
 ## 📦 Exports
-
-- Root package: `@funtools/native-ui`
 - UI components: `@funtools/native-ui/components`
 - Core helpers: `@funtools/native-ui/core`
 - Theme manager: `@funtools/native-ui/theme`
@@ -134,7 +128,9 @@ Designed as a wrapper around `lucide-react-native`:
 `@funtools/native-ui/theme` exposes:
 
 - `useThemeStore` - read theme values (`theme`, `colors`)
-- `useThemeHandlers` - actions including `toggleTheme`
+- `toggleTheme` - use this function to toggle between `light` and `dark` themes
+- `updateTheme` - advanced function to update theme values
+- `updateColors` - advanced function to update specific color values or hole color palette
 
 Theme values:
 - `light` and `dark`
@@ -143,11 +139,25 @@ Theme values:
 ### Toggle theme
 
 ```tsx
-import { useThemeHandlers } from '@funtools/native-ui/theme';
+import { toggleTheme } from '@funtools/native-ui/theme';
 
-const { toggleTheme } = useThemeHandlers();
 <Button title="Toggle Theme" onPress={toggleTheme} />
 ```
+
+### Manual Theme Config for custom colors
+
+```tsx
+import { updateColors } from '@funtools/native-ui/theme';
+
+function configTheme() {
+    updateTheme({
+        primary: '#4caf50',
+        error: '#f44336',
+        // ... other
+    })
+}
+```
+
 
 ## 🛠️ Advanced usage
 
