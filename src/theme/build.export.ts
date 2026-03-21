@@ -1,9 +1,13 @@
 import { useThemeHandlers } from "./store";
-import { Color, ColorState } from "./types";
 
-const { toggleTheme, updateTheme, updateThemeColor } = useThemeHandlers()
+const {
+    toggleTheme,
+    colors: { updateMany: updateColors },
+    theme: { set: updateTheme },
+} = useThemeHandlers();
 
-export { useThemeStore } from './store';
+export * from "@shared/utils/theme.utils";
 
-export { toggleTheme, updateTheme, updateThemeColor }
+export { useThemeStore } from "./store";
 
+export { toggleTheme, updateColors, updateTheme };

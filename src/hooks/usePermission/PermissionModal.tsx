@@ -1,9 +1,13 @@
-import { CenterModal } from "@core";
+import { CenterModal, ShowWhen } from "@core";
 import { CenterModalProps } from "@core";
 import { ThemeText } from "@core";
 import { Permission, PermissionsAndroid, PermissionStatus, View } from "react-native";
 import getPermissionInfo from "./getPermissionInfo";
 import { Button } from "@components";
+import { RenderModalUIProps } from ".";
+
+
+
 
 
 export type PermissionModalProps = Omit<CenterModalProps, 'children' | 'preventCloseRequest'> & {
@@ -12,16 +16,28 @@ export type PermissionModalProps = Omit<CenterModalProps, 'children' | 'preventC
     permissionStatus: PermissionStatus;
     requestPermission: () => void;
     description?: string;
+    renderModalUI?: RenderModalUIProps;
 }
 
-export function PermissionModal({ permission, requestPermission, onDeny, permissionStatus, description, ...props }: PermissionModalProps) {
+export function PermissionModal({ permission, requestPermission, onDeny, permissionStatus, description, renderModalUI, ...props }: PermissionModalProps) {
 
     const info = getPermissionInfo(permission);
+
+    if(renderModalUI) {
+        return renderModalUI({
+            requestPermission, 
+            permissionStatus, 
+            content: info, 
+            setIsModalVisible: props.setVisible,
+            permission
+        })
+    }
 
     return (
         <CenterModal {...props}
             preventCloseRequest={true}
-            style={{borderRadius: 20, padding: 8}} >
+            style={{borderRadius: 20, padding: 8}} 
+        >
             <View style={{gap: 24}} >
                 <View style={{alignItems: 'center', width: '100%', gap: 8}} >
                     <ThemeText style={{fontSize: 24, fontWeight: '600'}} >
@@ -38,13 +54,13 @@ export function PermissionModal({ permission, requestPermission, onDeny, permiss
                         color="primary" variant="solid"
                         title={permissionStatus === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN ? 'Settings' : 'Allow'} 
                         onPress={requestPermission} 
-                    />
+                        />
 
                     <Button 
                         title="Deny" 
                         onPress={onDeny} 
                         variant="outlined" color="text" 
-                    />
+                        />
                 </View>
             </View>
         </CenterModal>

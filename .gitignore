@@ -8,3 +8,4 @@ dist/
 .idea/
 .vscode/
 TEST_APP/
+*.tgz

@@ -12,7 +12,8 @@ import {
 import { SpinnerLoader, type SpinnerLoaderProps } from "@components";
 import { getButtonStyle } from "../utils";
 import { ButtonVariant } from "../types";
-import { Color, useThemeStore } from "@theme";
+import { useThemeStore } from "@theme";
+import { toRgba } from "@shared/utils/theme.utils";
 
 export type ButtonProp = Omit<
     RippleContainerProps,
@@ -53,15 +54,15 @@ export function Button({
 
         return {
             bgColor: colors[color],
-            textColor: "255, 255, 255" as Color,
+            textColor: "rgb(255, 255, 255)",
         };
     });
 
     const { text, bg, border } = useMemo(() => {
         return getButtonStyle({
             variant,
-            text: theme.textColor,
-            bg: theme.bgColor,
+            text: toRgba(theme.textColor),
+            bg: toRgba(theme.bgColor),
         });
     }, [theme, variant]);
 

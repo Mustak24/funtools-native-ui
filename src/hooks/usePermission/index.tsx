@@ -1,8 +1,18 @@
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { Linking, Permission, PermissionsAndroid, PermissionStatus, Platform } from "react-native";
 import { PermissionModal } from "./PermissionModal";
 
 
+export type RenderModalUIProps = (props: { 
+    requestPermission: () => void;
+    permissionStatus: PermissionStatus;
+    permission: Permission;
+    setIsModalVisible: (visible: boolean) => void;
+    content: {
+        title: string;
+        description: string;
+    }
+}) => ReactNode;
 
 export type usePermissionProps = {
     permission: Permission;
@@ -10,10 +20,11 @@ export type usePermissionProps = {
     autoRequest?: boolean;
     onGrant?: () => void;
     modalDescription?: string;
+    renderModalUI?: RenderModalUIProps
 }
 
 
-export function usePermission({ permission, autoRequest = false, onDeny, onGrant, modalDescription }: usePermissionProps) {
+export function usePermission({ permission, autoRequest = false, onDeny, onGrant, modalDescription, renderModalUI }: usePermissionProps) {
     
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [permissionStatus, setPermissionStatus] = useState<PermissionStatus>(PermissionsAndroid.RESULTS.DENIED);
@@ -68,6 +79,8 @@ export function usePermission({ permission, autoRequest = false, onDeny, onGrant
                 description={modalDescription}
             
                 onDeny={handleDeny}
+
+                renderModalUI={renderModalUI}
             />
         )
     }

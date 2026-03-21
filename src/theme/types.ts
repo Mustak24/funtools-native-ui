@@ -11,5 +11,3 @@ export type ColorState =
     | 'warning'
     | 'success'
 ;
-
-export type Color = `${number}, ${number}, ${number}`;

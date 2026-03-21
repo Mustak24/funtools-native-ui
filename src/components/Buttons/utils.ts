@@ -1,10 +1,9 @@
-import { Color, ColorState, useThemeStore } from "@theme";
 import { ButtonVariant } from "./types";
 import { toRgba } from "@shared/utils/theme.utils";
 
 
 
-export function getButtonStyle({text, bg, variant}: {text: Color, bg: Color, variant: ButtonVariant}) {
+export function getButtonStyle({text, bg, variant}: {text: string, bg: string, variant: ButtonVariant}) {
     if(variant === 'solid') return {text: toRgba(text), bg: toRgba(bg), border: toRgba(bg)};
 
     if(variant === 'outlined') return {text: toRgba(bg), bg: 'transparent', border: toRgba(bg)};
