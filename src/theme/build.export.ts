@@ -9,6 +9,7 @@ const {
 } = useThemeHandlers();
 
 export * from "@shared/utils/theme.utils";
+export * from "./types";
 
 export { useThemeStore } from "./store";
 
