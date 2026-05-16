@@ -11,7 +11,7 @@ import {
     ViewStyle,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { toRgba } from "@shared/utils/theme.utils";
+import { toRgba } from "@shared/utils/theme";
 
 export type RippleContainerProps = Omit<
     PressableProps,

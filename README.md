@@ -12,11 +12,11 @@ npm install @funtools/native-ui
 
 Install these in your application:
 
-- `react` (>=18.0.0)
+- `react` (>=18.2.0)
 - `react-native` (>=0.72.0)
-- `react-native-safe-area-context` (>=5.7.0)
+- `react-native-safe-area-context` (>=4.5.0)
 - `@funtools/store` (^1.0.4)
-- `lucide-react-native` (^0.577.0)
+- `lucide-react-native` (>=0.300.0)
 
 ```bash
 npm install react react-native react-native-safe-area-context @funtools/store lucide-react-native
@@ -27,7 +27,7 @@ npm install react react-native react-native-safe-area-context @funtools/store lu
 ```tsx
 import React from 'react';
 import { SafeAreaView } from 'react-native';
-import { ThemeView, ThemeText, Icon } from '@funtools/native-ui/core';
+import { ThemeView, ThemeText, Icon, ShowWithAnimation } from '@funtools/native-ui/core';
 import { Button, IconButton, Input, SpinnerLoader } from '@funtools/native-ui/components';
 import { useThemeStore, toggleTheme } from '@funtools/native-ui/theme';
 
@@ -41,6 +41,9 @@ export default function App() {
       <Input placeholder="Type here" style={{ marginTop: 12, borderWidth: 1, borderColor: '#ccc', padding: 8 }} />
       <IconButton icon="Plus" onPress={() => console.log('pressed')} style={{ marginTop: 12 }} />
       <SpinnerLoader style={{ marginTop: 12 }} />
+      <ShowWithAnimation when={theme === 'dark'} otherwise={<ThemeText style={{ marginTop: 12 }}>Light mode</ThemeText>}>
+        <ThemeText style={{ marginTop: 12 }}>Dark mode</ThemeText>
+      </ShowWithAnimation>
     </ThemeView>
   );
 }
@@ -120,8 +123,28 @@ Designed as a wrapper around `lucide-react-native`:
 - `ThemeView`: color-aware container from `theme.colors.bg` / `bg-secondary`
 - `ThemeText`: text component that uses theme color by default
 - `RippleContainer`: touchable wrapper with ripple effect and `opacity` state
-- `ShowWhen`: conditional render helper
+- `Show`: conditional render helper
+- `ShowWithAnimation`: animated conditional render helper with built-in enter/exit transitions
 - `Icon`, `ThemeText`, `ThemeView` are intended to be used together for consistent themed UI.
+
+### ShowWithAnimation
+
+Import: `import { ShowWithAnimation } from '@funtools/native-ui/core';`
+
+Props:
+- `when: boolean` (required)
+- `children: ReactNode` (required)
+- `otherwise?: ReactNode`
+- `removeOnHide?: boolean` (defaults to `true`)
+- `animationType?: 'fade'` (defaults to `fade`)
+- `animationStyle?: { children: AnimationStyleProperties; otherwise?: AnimationStyleProperties }`
+- `containerProps?: ThemeViewProps`
+- `animationConfig?: Animated.TimingAnimationConfig` excluding `toValue` and `useNativeDriver`
+
+Behavior:
+- uses the built-in `fade` preset by default, which animates `opacity` and `scale`
+- animates both the main and fallback content when `otherwise` is provided
+- removes hidden content by default, and keeps it mounted only when `removeOnHide={false}`
 
 ## 🌈 Theme system
 
@@ -164,6 +187,7 @@ function configTheme() {
 - `Button`/`IconButton` can use theme colors: `primary`, `error`, `success`, etc.
 - `Input` accepts `color` key or raw color string.
 - `SpinnerLoader` works with any icon color, and rotates using `Animated.loop`.
+- `ShowWithAnimation` is useful for animated state swaps such as theme, auth, and empty-state transitions.
 
 ## 🧪 Development
 

@@ -1,13 +1,8 @@
-import { CenterModal, ShowWhen } from "@core";
-import { CenterModalProps } from "@core";
-import { ThemeText } from "@core";
 import { Permission, PermissionsAndroid, PermissionStatus, View } from "react-native";
+import { CenterModalProps, CenterModal, Button } from "@components";
+import { ThemeText } from "@core";
 import getPermissionInfo from "./getPermissionInfo";
-import { Button } from "@components";
 import { RenderModalUIProps } from ".";
-
-
-
 
 
 export type PermissionModalProps = Omit<CenterModalProps, 'children' | 'preventCloseRequest'> & {
@@ -54,13 +49,13 @@ export function PermissionModal({ permission, requestPermission, onDeny, permiss
                         color="primary" variant="solid"
                         title={permissionStatus === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN ? 'Settings' : 'Allow'} 
                         onPress={requestPermission} 
-                        />
+                    />
 
                     <Button 
                         title="Deny" 
                         onPress={onDeny} 
                         variant="outlined" color="text" 
-                        />
+                    />
                 </View>
             </View>
         </CenterModal>

@@ -6,6 +6,7 @@ import {
     useRef,
     useState,
 } from "react";
+
 import {
     Animated,
     Modal,
@@ -19,7 +20,7 @@ import {
 
 import { ThemeView, type ThemeViewProps, RippleContainer } from "@core";
 import { useThemeStore, type ColorState } from "@theme";
-import { toRgba } from "@shared/utils/theme.utils";
+import { toRgba } from "@shared/utils/theme";
 
 export type CenterModalProps = Omit<ModalProps, "animationType"> & {
     children: ReactNode;

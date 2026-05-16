@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import {
     RippleContainer,
     type RippleContainerProps,
-    ShowWhen,
+    Show,
     Icon,
     type IconName,
     ThemeText,
@@ -13,7 +13,7 @@ import { SpinnerLoader, type SpinnerLoaderProps } from "@components";
 import { getButtonStyle } from "../utils";
 import { ButtonVariant } from "../types";
 import { useThemeStore } from "@theme";
-import { toRgba } from "@shared/utils/theme.utils";
+import { toRgba } from "@shared/utils/theme";
 
 export type ButtonProp = Omit<
     RippleContainerProps,
@@ -88,7 +88,7 @@ export function Button({
                 opacity: disabled ? 0.8 : 1,
             }}
         >
-            <ShowWhen
+            <Show
                 when={!loading}
                 otherwise={
                     <SpinnerLoader
@@ -98,26 +98,26 @@ export function Button({
                     />
                 }
             >
-                <ShowWhen when={!!startIcon}>
+                <Show when={!!startIcon}>
                     <Icon
                         name={startIcon as IconName}
                         size={fontSize}
                         customColor={text}
                     />
-                </ShowWhen>
-            </ShowWhen>
+                </Show>
+            </Show>
 
             <ThemeText textColor={text} style={{ fontSize }}>
                 {title}
             </ThemeText>
 
-            <ShowWhen when={!!endIcon}>
+            <Show when={!!endIcon}>
                 <Icon
                     name={endIcon as IconName}
                     size={fontSize}
                     customColor={text}
                 />
-            </ShowWhen>
+            </Show>
         </RippleContainer>
     );
 }

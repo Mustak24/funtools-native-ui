@@ -1,3 +1,3 @@
-export * from './Buttons';
-export * from './Loaders';
-export * from './InputTexts';
+export * from './form';
+export * from './feedback';
+export * from './overlay';

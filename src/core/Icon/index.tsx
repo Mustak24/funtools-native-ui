@@ -3,7 +3,7 @@ import * as icons from "lucide-react-native";
 import { LucideProps } from "lucide-react-native";
 import { useThemeStore } from "@theme";
 import { type ColorState } from "@theme";
-import { toRgba } from "@shared/utils/theme.utils";
+import { toRgba } from "@shared/utils/theme";
 
 export type IconName = keyof typeof icons;
 
