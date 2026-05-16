@@ -120,7 +120,7 @@ Designed as a wrapper around `lucide-react-native`:
 - `ThemeView`: color-aware container from `theme.colors.bg` / `bg-secondary`
 - `ThemeText`: text component that uses theme color by default
 - `RippleContainer`: touchable wrapper with ripple effect and `opacity` state
-- `ShowWhen`: conditional render helper
+- `Show`: conditional render helper
 - `Icon`, `ThemeText`, `ThemeView` are intended to be used together for consistent themed UI.
 
 ## 🌈 Theme system

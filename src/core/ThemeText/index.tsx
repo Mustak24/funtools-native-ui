@@ -1,7 +1,8 @@
-import { Animated, TextProps } from "react-native";
+import { Animated, Text, TextProps } from "react-native";
 import { type ColorState, useThemeStore } from "@theme";
-import { AnimatedInterpolValue } from "@shared/types/native.types";
-import { toRgba } from "@shared/utils/theme.utils";
+import { AnimatedInterpolValue } from "@shared/types/native";
+import { toRgba } from "@shared/utils/theme";
+import { forwardRef } from "react";
 
 export type ThemeTextProps = TextProps & {
     color?: ColorState;
@@ -9,16 +10,23 @@ export type ThemeTextProps = TextProps & {
     textColor?: string | AnimatedInterpolValue;
 };
 
-export function ThemeText({
-    style,
-    color: _color = "text",
-    alpha = 100,
-    textColor,
-    ...props
-}: ThemeTextProps): React.JSX.Element {
+export const ThemeText = forwardRef<Text, ThemeTextProps>((props, ref) => {
+    const {
+        style,
+        color: _color = "text",
+        alpha = 100,
+        textColor
+    } = props;
+
     const themeColor = useThemeStore((states) => states.colors[_color]);
 
     const color = textColor ?? toRgba(themeColor, alpha);
 
-    return <Animated.Text {...props} style={[style, { color }]} />;
-}
+    return (
+        <Animated.Text
+            {...props}
+            ref={ref}
+            style={[style, { color }]}
+        />
+    )
+})

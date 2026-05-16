@@ -1,5 +1,5 @@
 import { ButtonVariant } from "./types";
-import { toRgba } from "@shared/utils/theme.utils";
+import { toRgba } from "@shared/utils/theme";
 
 
 

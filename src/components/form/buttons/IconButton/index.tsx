@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import {
     Icon,
     type IconName,
-    ShowWhen,
+    Show,
     RippleContainer,
     type RippleContainerProps,
 } from "@core";
@@ -10,7 +10,7 @@ import { SpinnerLoader, type SpinnerLoaderProps } from "@components";
 import { getButtonStyle } from "../utils";
 import { ButtonVariant } from "../types";
 import { useThemeStore } from "@theme";
-import { toRgba } from "@shared/utils/theme.utils";
+import { toRgba } from "@shared/utils/theme";
 
 export type IconButtonProps = RippleContainerProps & {
     icon: IconName;
@@ -76,7 +76,7 @@ export function IconButton({
                 justifyContent: "center",
             }}
         >
-            <ShowWhen
+            <Show
                 when={!loading}
                 otherwise={
                     <SpinnerLoader
@@ -91,7 +91,7 @@ export function IconButton({
                     name={icon}
                     size={iconSize ?? Math.floor(size * 0.6)}
                 />
-            </ShowWhen>
+            </Show>
         </RippleContainer>
     );
 }

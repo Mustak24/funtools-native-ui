@@ -1,4 +1,4 @@
-import { toRgba } from "@shared/utils/theme.utils";
+import { toRgba } from "@shared/utils/theme";
 import { useThemeStore } from "@theme";
 import { TextInput, TextInputProps } from "react-native";
 
