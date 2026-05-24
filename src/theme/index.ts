@@ -24,20 +24,18 @@ const { useStore, useHandlers } = createStore({
   },
 
   syncHandlers: {
-    toggleTheme(state, theme?: Theme) {
-      state.theme = theme ?? state.theme === 'dark' ? 'light' : 'dark';
-      state.colors = _colors[state.theme];
+    toggleTheme({states}, theme?: Theme) {
+      states.theme = theme ?? states.theme === 'dark' ? 'light' : 'dark';
+      states.colors = _colors[states.theme];
     },
 
-    updateColors(state, { theme, colors }: {theme: Theme, colors: Partial<typeof _colors[Theme]>}) {
-      const handler = useHandlers();
-
-      handler.palettes.updateMany({
+    updateColors({states, handlers}, { theme, colors }: {theme: Theme, colors: Partial<typeof _colors[Theme]>}) {
+      handlers.palettes.updateMany({
         [theme]: colors
       })
 
-      if(state.theme === theme) {
-        handler.colors.updateMany(colors);
+      if(states.theme === theme) {
+        handlers.colors.updateMany(colors);
       }
     }
   },

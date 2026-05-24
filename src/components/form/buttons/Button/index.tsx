@@ -42,6 +42,7 @@ export function Button({
     style,
     disabled = false,
     fontSize = 16,
+    rounded = 12,
     ...props
 }: ButtonProp) {
     const theme = useThemeStore(({ colors }) => {
@@ -81,7 +82,7 @@ export function Button({
                 justifyContent: "center",
                 paddingInline: 12,
                 height: 40,
-                borderRadius: 12,
+                borderRadius: rounded,
                 borderWidth: 1,
                 ...style,
 
