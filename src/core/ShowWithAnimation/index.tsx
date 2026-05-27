@@ -1,5 +1,5 @@
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Animated, useAnimatedValue } from "react-native";
+import { Animated, useAnimatedValue, View } from "react-native";
 import { ANIMATIONS, createAnimationStyle } from "./animations";
 import { ShowWithAnimationProps } from "./types";
 import { ThemeView } from "../ThemeView";
@@ -17,6 +17,8 @@ export function ShowWithAnimation(props: ShowWithAnimationProps) {
         removeOnHide = false,
         animationType = 'fade',
         animationConfig = { duration: 300 },
+        onShowAnimationEnd,
+        onHideAnimationEnd,
         ...wrapperProps
     } = props;
 
@@ -85,6 +87,8 @@ export function ShowWithAnimation(props: ShowWithAnimationProps) {
             setIsOtherwiseShow(false);
             otherwiseJsAnimatedValue.setValue(-1);
             otherwiseNativeAnimatedValue.setValue(-1);
+            onShowAnimationEnd?.children?.();
+            onHideAnimationEnd?.otherwise?.();
         })
     }
 
@@ -104,6 +108,8 @@ export function ShowWithAnimation(props: ShowWithAnimationProps) {
             setIsChildrenShow(false);
             childrenJsAnimatedValue.setValue(-1);
             childrenNativeAnimatedValue.setValue(-1);
+            onShowAnimationEnd?.otherwise?.();
+            onHideAnimationEnd?.children?.();
         })
     }
 
@@ -116,10 +122,14 @@ export function ShowWithAnimation(props: ShowWithAnimationProps) {
         <Show when={ removeOnHide ? (isChildrenShow || (!!otherwise && isOtherwiseShow)) : true } >
             <ThemeView
                 {...containerProps}
-                style={[containerProps?.style, {position: 'relative', alignItems: 'center', justifyContent: 'center'}]}
+                style={[
+                    containerProps?.style, {
+                        position: 'relative', alignItems: 'center', justifyContent: 'center',
+                        display: (isChildrenShow || (!!otherwise && isOtherwiseShow)) ? 'flex' : 'none'
+                    }]}
             >
                 <Show when={removeOnHide ? isChildrenShow : true} >
-                    <ThemeView
+                    <Animated.View
                         {...wrapperProps}
                         style={[
                             wrapperProps.style, 
@@ -131,11 +141,11 @@ export function ShowWithAnimation(props: ShowWithAnimationProps) {
                         ]}
                         >
                         { children }
-                    </ThemeView>
+                    </Animated.View>
                 </Show>
 
                 <Show when={!!otherwise && (removeOnHide ? isOtherwiseShow : true)} >
-                    <ThemeView
+                    <View
                         {...wrapperProps}
                         style={[
                             wrapperProps.style, 
@@ -147,7 +157,7 @@ export function ShowWithAnimation(props: ShowWithAnimationProps) {
                         ]}
                         >
                         { otherwise }
-                    </ThemeView>
+                    </View>
                 </Show>
             </ThemeView>
         </Show>
