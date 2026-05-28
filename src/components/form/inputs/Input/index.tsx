@@ -16,7 +16,7 @@ export function Input({onChangeText, color, style, ...props}: InputProps) {
     return (
         <TextInput
             {...props}
-            placeholderTextColor={toRgba(textColor ?? colors.text, 0.8)}
+            placeholderTextColor={toRgba(textColor ?? colors.text, 80)}
             style={[{color: textColor ?? colors.text}, style]}
         />
     )
