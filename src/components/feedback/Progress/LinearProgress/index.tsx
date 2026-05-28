@@ -1,4 +1,4 @@
-import { ThemeView, ThemeViewProps } from "@funtools/native-ui/core"
+import { ThemeView, ThemeViewProps } from "@core";
 import { useEffect } from "react";
 import { Animated, useAnimatedValue } from "react-native";
 
