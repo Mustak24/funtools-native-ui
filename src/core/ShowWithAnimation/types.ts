@@ -1,4 +1,4 @@
-import { Animated, ColorValue } from "react-native";
+import { Animated, ColorValue, EasingFunction, ViewProps } from "react-native";
 import { ThemeViewProps } from "../ThemeView";
 
 export type AnimationType = 'fade';
@@ -54,7 +54,7 @@ export type AnimationStyle = {
     otherwise?: AnimationStyleProperties;
 }
 
-export type ShowWithAnimationProps = ThemeViewProps & {
+export type ShowWithAnimationProps = ViewProps & {
     when: boolean;
     children: React.ReactNode;
     otherwise?: React.ReactNode;
@@ -62,5 +62,17 @@ export type ShowWithAnimationProps = ThemeViewProps & {
     animationType?: AnimationType;
     animationStyle?: AnimationStyle
     containerProps?: ThemeViewProps;
-    animationConfig?: Omit<Animated.TimingAnimationConfig, 'toValue' | 'useNativeDrive'>
+    animationConfig?: {
+        duration?: number;
+        delay?: number;
+        easing?: EasingFunction;
+    };
+    onShowAnimationEnd?: {
+        children?: () => void;
+        otherwise?: () => void;
+    },
+    onHideAnimationEnd?: {
+        children?: () => void;
+        otherwise?: () => void;
+    }
 }
