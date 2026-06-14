@@ -1,5 +1,5 @@
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Animated, useAnimatedValue, View } from "react-native";
+import { Animated, useAnimatedValue } from "react-native";
 import { ANIMATIONS, createAnimationStyle } from "./animations";
 import { ShowWithAnimationProps } from "./types";
 import { ThemeView } from "../ThemeView";
@@ -139,13 +139,13 @@ export function ShowWithAnimation(props: ShowWithAnimationProps) {
                                 position: when ? 'relative' : otherwise ? 'absolute' : 'relative'
                             }
                         ]}
-                        >
+                    >
                         { children }
                     </Animated.View>
                 </Show>
 
                 <Show when={!!otherwise && (removeOnHide ? isOtherwiseShow : true)} >
-                    <View
+                    <Animated.View
                         {...wrapperProps}
                         style={[
                             wrapperProps.style, 
@@ -155,9 +155,9 @@ export function ShowWithAnimation(props: ShowWithAnimationProps) {
                                 position: when ? 'absolute' : 'relative'
                             }
                         ]}
-                        >
+                    >
                         { otherwise }
-                    </View>
+                    </Animated.View>
                 </Show>
             </ThemeView>
         </Show>
