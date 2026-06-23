@@ -1,0 +1,1 @@
+export type ACTION<T> = ((val: T) => void) | T;

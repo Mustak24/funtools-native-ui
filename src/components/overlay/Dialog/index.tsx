@@ -8,6 +8,7 @@ import { ColorState } from "@theme";
 
 type DialogProps = {
     onClose?: () => void;
+    onHide?: () => void;
     containerProps?: ThemeViewProps;
     inlineMargin?: number | `${number}%`;
     blockMargin?: number | `${number}%`;
@@ -30,6 +31,7 @@ const Dialog: DialogComponent = (props: DialogProps) => {
         visible,
         children,
         onClose,
+        onHide,
         inlineMargin = 32,
         blockMargin = '30%',
         containerProps,
@@ -72,7 +74,8 @@ const Dialog: DialogComponent = (props: DialogProps) => {
             useNativeDriver: true,
             ...animationConfig
         }).start(() => {
-            setShow(false)
+            setShow(false);
+            onHide?.();
         })
     }
 
