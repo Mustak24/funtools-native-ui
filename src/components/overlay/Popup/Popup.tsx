@@ -2,7 +2,7 @@ import { Button, IconButton } from "../../form";
 import { Dialog } from "../Dialog";
 import { StyleSheet, View } from "react-native";
 import { Icon, Show, ThemeText } from "@core";
-import { usePopupContext } from ".";
+import { usePopupContext } from "./Provider";
 
 
 export function Popup({id}: {id: string}) {
@@ -11,7 +11,7 @@ export function Popup({id}: {id: string}) {
     const popup = popups.find(popup => popup.id === id);
     if(!popup) return null;
     
-    const { icon, title, subtitle, actions, color, styles: customStyles, visible } = popup;
+    const { icon, title, subtitle, actions, styles: customStyles, visible } = popup;
 
     return (
         <Dialog 
@@ -34,7 +34,6 @@ export function Popup({id}: {id: string}) {
                         <Icon 
                             name={icon} 
                             size={32}
-                            color={color}
                         />
                     ) : (
                         icon()

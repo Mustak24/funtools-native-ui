@@ -69,6 +69,7 @@ export function RippleContainer({
     }
 
     function startAnimation() {
+        if(props.disabled) return;
         Animated.timing(animatedValue, {
             toValue: 1,
             duration,
