@@ -4,3 +4,4 @@ export * from './ThemeText';
 export * from './ThemeView';
 export * from './RippleContainer';
 export * from './ShowWithAnimation';
+export * from './Popup';

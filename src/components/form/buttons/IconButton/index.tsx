@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
     Icon,
     type IconName,
@@ -11,16 +11,25 @@ import { getButtonStyle } from "../utils";
 import { ButtonVariant } from "../types";
 import { useThemeStore } from "@theme";
 import { toRgba } from "@shared/utils/theme";
+import { GestureResponderEvent } from "react-native";
 
-export type IconButtonProps = RippleContainerProps & {
+
+type LocalStates = Partial<Pick<IconButtonProps, 'icon' | 'color' | 'loading'>>;
+
+export type IconButtonProps = Omit<RippleContainerProps, 'rippleColor' | 'rippleScale' | 'onPress'> & {
     icon: IconName;
 
+    autoDisabled?: boolean;
     variant?: ButtonVariant;
     size?: number;
     iconSize?: number;
     rounded?: number;
     loading?: boolean;
     loaderName?: SpinnerLoaderProps["name"];
+    onPress?: (event: GestureResponderEvent, {handleState, reset}: { 
+        handleState: <K extends keyof LocalStates>(key: K, val: LocalStates[K]) => void;
+        reset: () => void;
+    }) => void;
 };
 
 export function IconButton({
@@ -33,8 +42,31 @@ export function IconButton({
     loading = false,
     loaderName,
     disabled = false,
+    autoDisabled = false,
     ...props
 }: IconButtonProps) {
+
+    const [states, setStates] = useState<LocalStates>({});
+    
+    function handleState<K extends keyof LocalStates>(key: K, val: LocalStates[K]) {
+        setStates(prev => ({...prev, [key]: val}));
+    }
+    
+    function resetStates() {
+        setStates({});
+    }
+
+    if(!iconSize) iconSize = Math.floor(size * 0.6);
+
+    icon = states.icon ?? icon;
+    color = states.color ?? color;
+    loading = states.loading ?? loading;
+
+    if(autoDisabled === undefined || autoDisabled) {
+        disabled = disabled || loading;
+    }
+
+
     const theme = useThemeStore(({ colors }) => {
         if (["text", "bg"].includes(color ?? "")) {
             return {
@@ -75,13 +107,15 @@ export function IconButton({
                 alignItems: "center",
                 justifyContent: "center",
             }}
+
+            onPress={(event) => props.onPress?.(event, {handleState, reset: resetStates})}
         >
             <Show
                 when={!loading}
                 otherwise={
                     <SpinnerLoader
                         name={loaderName}
-                        size={iconSize ?? Math.floor(size * 0.6)}
+                        size={iconSize}
                         customColor={text}
                     />
                 }
@@ -89,7 +123,7 @@ export function IconButton({
                 <Icon
                     customColor={text}
                     name={icon}
-                    size={iconSize ?? Math.floor(size * 0.6)}
+                    size={iconSize}
                 />
             </Show>
         </RippleContainer>

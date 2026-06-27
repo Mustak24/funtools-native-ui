@@ -10,6 +10,8 @@ type DialogProps = {
     onClose?: () => void;
     onHide?: () => void;
     containerProps?: ThemeViewProps;
+    maxWidth?: number | `${number}%`;
+    maxHeight?: number | `${number}%`;
     inlineMargin?: number | `${number}%`;
     blockMargin?: number | `${number}%`;
     backdropVariant?: ColorState;
@@ -32,6 +34,8 @@ const Dialog: DialogComponent = (props: DialogProps) => {
         children,
         onClose,
         onHide,
+        maxWidth,
+        maxHeight,
         inlineMargin = 32,
         blockMargin = '30%',
         containerProps,
@@ -123,32 +127,52 @@ const Dialog: DialogComponent = (props: DialogProps) => {
                     rippleOpacity={0.2}
                 />
 
-                <ThemeView 
-                    {...containerProps}
-                    style={[
-                        {
-                            width: '100%', 
-                            maxWidth: width - getMarginValue(inlineMargin, width), 
-                            maxHeight: height - getMarginValue(blockMargin, height),
-                            padding: 4,
-                            borderRadius: 12,
-                            gap: 8,
-                        },
-                        containerProps?.style,
-                        {
-                            transform: [
-                                {
-                                    scale: animatedValue.interpolate({
-                                        inputRange: [0, 1],
-                                        outputRange: [0.8, 1],
-                                    })
-                                }
-                            ]
-                        }
-                    ]}
-                >
-                    {children}
-                </ThemeView>
+                <View style={{width: '100%', flexDirection: 'row'}} >
+                    <RippleContainer
+                        style={{flex: 1}}
+                        onPress={onClose}
+                        rippleOpacity={0.2}
+                    />
+
+                    <ThemeView 
+                        {...containerProps}
+                        style={[
+                            {
+                                width: '100%', 
+                                padding: 4,
+                                borderRadius: 12,
+                                gap: 8,
+                            },
+                            containerProps?.style,
+                            {
+                                maxWidth: typeof maxWidth === 'number' ? 
+                                    Math.min(maxWidth, (width - getMarginValue(inlineMargin, width))) : 
+                                    maxWidth,
+                                maxHeight: typeof maxHeight === 'number' ? 
+                                    Math.min(maxHeight, (height - getMarginValue(blockMargin, height))) :
+                                    maxHeight,
+                            },
+                            {
+                                transform: [
+                                    {
+                                        scale: animatedValue.interpolate({
+                                            inputRange: [0, 1],
+                                            outputRange: [0.8, 1],
+                                        })
+                                    }
+                                ]
+                            }
+                        ]}
+                        >
+                        {children}
+                    </ThemeView>
+
+                    <RippleContainer
+                        style={{flex: 1}}
+                        onPress={onClose}
+                        rippleOpacity={0.2}
+                    />
+                </View>
 
                 <RippleContainer
                     style={{flex: 1, width: '100%'}}

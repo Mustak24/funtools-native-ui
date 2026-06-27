@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 
 import {
     RippleContainer,
@@ -14,10 +14,13 @@ import { getButtonStyle } from "../utils";
 import { ButtonVariant } from "../types";
 import { useThemeStore } from "@theme";
 import { toRgba } from "@shared/utils/theme";
+import { GestureResponderEvent } from "react-native";
 
-export type ButtonProp = Omit<
+type LocalStates = Partial<Pick<ButtonProps, 'title' | 'startIcon' | 'endIcon' | 'color' | 'loading'>>
+
+export type ButtonProps = Omit<
     RippleContainerProps,
-    "rippleColor" | "rippleScale"
+    "rippleColor" | "rippleScale" | 'onPress'
 > & {
     title: string;
 
@@ -26,9 +29,15 @@ export type ButtonProp = Omit<
     variant?: ButtonVariant;
     rounded?: number;
     fontSize?: number;
+    height?: number;
 
+    autoDisabled?: boolean;
     loading?: boolean;
     loaderName?: SpinnerLoaderProps["name"];
+    onPress?: ( event: GestureResponderEvent, {handleState, reset}: { 
+        handleState: <K extends keyof LocalStates>(key: K, val: LocalStates[K]) => void;
+        reset: () => void;
+    }) => void;
 };
 
 export function Button({
@@ -41,10 +50,32 @@ export function Button({
     loaderName,
     style,
     disabled = false,
-    fontSize = 16,
+    height = 40,
+    fontSize,
     rounded = 12,
+    onPress,
+    autoDisabled = false,
     ...props
-}: ButtonProp) {
+}: ButtonProps) {
+    
+    
+    const [states, setStates] = useState<LocalStates>({});
+    function handleState<K extends keyof LocalStates>(key: K, val: typeof states[K]) {
+        setStates((prev) => ({ ...prev, [key]: val }));
+    }
+
+    if(!fontSize) fontSize = Math.floor(height * 0.4);
+
+    title = states.title ?? title;
+    startIcon = states.startIcon ?? startIcon;
+    endIcon = states.endIcon ?? endIcon;
+    color = states.color ?? color;
+    loading = states.loading ?? loading;
+    
+    if(autoDisabled === undefined || autoDisabled) {
+        disabled = disabled || loading;
+    }
+    
     const theme = useThemeStore(({ colors }) => {
         if (["text", "bg"].includes(color ?? "")) {
             return {
@@ -58,7 +89,7 @@ export function Button({
             textColor: "rgb(255, 255, 255)",
         };
     });
-
+    
     const { text, bg, border } = useMemo(() => {
         return getButtonStyle({
             variant,
@@ -81,13 +112,15 @@ export function Button({
                 alignItems: "center",
                 justifyContent: "center",
                 paddingInline: 12,
-                height: 40,
+                height,
                 borderRadius: rounded,
                 borderWidth: 1,
                 ...style,
 
                 opacity: disabled ? 0.8 : 1,
             }}
+
+            onPress={(event) => onPress?.(event, {handleState, reset: () => setStates({})})}
         >
             <Show
                 when={!loading}

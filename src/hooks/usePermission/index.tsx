@@ -94,6 +94,6 @@ export function usePermission({ permission, autoRequest = false, onDeny, onGrant
     return {
         requestPermission,
         permissionStatus,
-        Modal
+        PermissionModal: Modal,
     }   
 }

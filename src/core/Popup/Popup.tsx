@@ -1,23 +1,26 @@
-import { Button, IconButton } from "../../form";
-import { Dialog } from "../Dialog";
+import { Button, IconButton } from "../../components/form";
+import { Dialog } from "../../components/overlay/Dialog";
 import { StyleSheet, View } from "react-native";
 import { Icon, Show, ThemeText } from "@core";
 import { usePopupContext } from "./Provider";
 
 
 export function Popup({id}: {id: string}) {
-    const { popups, hidePopup, cleanupPopups, updateLoading } = usePopupContext();
+    const { popups, hidePopup, cleanupPopups } = usePopupContext();
 
     const popup = popups.find(popup => popup.id === id);
     if(!popup) return null;
     
-    const { icon, title, subtitle, actions, styles: customStyles, visible } = popup;
+    const { icon, title, subtitle, actions, styles: customStyles, visible, closeAfterAction } = popup;
 
     return (
         <Dialog 
             visible={visible}
-            containerProps={{style: styles.dialog}}
             onHide={cleanupPopups}
+            containerProps={{style: styles.dialog}}
+            style={[{padding: 12}, customStyles?.dialog]}
+            maxWidth={typeof customStyles?.dialog.maxWidth === 'number' ? customStyles.dialog.maxWidth : 440}
+            maxHeight={typeof customStyles?.dialog.maxWidth === 'number' ? customStyles.dialog.maxWidth : undefined}
         >
             <View style={[styles.header]} >
                 <IconButton
@@ -28,7 +31,7 @@ export function Popup({id}: {id: string}) {
                 />
             </View>
             
-            <Dialog.Content>
+            <Dialog.Content contentContainerStyle={[styles.content, customStyles?.content]} >
                 {   !icon ? null :
                     typeof icon === 'string' ? (
                         <Icon 
@@ -57,10 +60,14 @@ export function Popup({id}: {id: string}) {
                         <Button
                             key={index}
                             {...action}
-                            onPress={() => {
-                                action.onPress({
-                                    hide: () => hidePopup(id), 
-                                    setLoading: (loading) => updateLoading(id, index, loading)
+                            onPress={(event, options) => {
+                                if(closeAfterAction === undefined || closeAfterAction) {
+                                    hidePopup(id);
+                                }
+
+                                action.onPress(event, {
+                                    ...options,
+                                    hide: () => hidePopup(id)
                                 })
                             }}
                             rounded={action.rounded ?? 100}
@@ -78,8 +85,10 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         gap: 20,
         padding: 16,
-        position: 'relative',
-        maxWidth: 440
+        position: 'relative'
+    },
+    content: {
+        gap: 8,
     },
     header: {
         flexDirection: 'row',
