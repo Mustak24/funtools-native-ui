@@ -25,6 +25,9 @@ export {
     
     SpinnerLoader,
     type SpinnerLoaderProps,
+
+    EmptyState,
+    type EmptyStateProps,
 } from '@components';
 
 export { default as FuntoolsNativeUIProvider } from '../FuntoolsNativeUIProvider';
