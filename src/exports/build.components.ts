@@ -2,6 +2,9 @@ export {
     Input,
     type InputProps,
 
+    Slider,
+    type SliderProps,
+
     Button,
     type ButtonProps,
 

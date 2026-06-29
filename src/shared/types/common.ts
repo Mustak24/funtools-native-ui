@@ -1,1 +1,1 @@
-export type ACTION<T> = ((val: T) => void) | T;
+export type ACTION<T> = ((val: T) => T) | T;
