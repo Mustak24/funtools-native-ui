@@ -2,16 +2,15 @@ import { ThemeText, ThemeView } from "@core";
 import { useAnimatedValue } from "@hooks";
 import { minMax } from "@shared/utils/common";
 import { ColorState, useThemeStore } from "@theme";
-import { Dispatch, SetStateAction, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { Dispatch, ReactNode, SetStateAction, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Animated, GestureResponderEvent, PanResponder, Pressable, StyleSheet, View } from "react-native";
 
 export type SliderProps = {
-    value: number;
-
+    value?: number;
     minmax?: [number, number];
-    onChangeValue: Dispatch<SetStateAction<number>>;
+    onChangeValue?: Dispatch<SetStateAction<number>>;
     onSelectValue?: (value: number) => void;
-    renderLabel?: (value: number) => string;
+    renderLabel?: (value: number) => ReactNode;
     height?: number;
     rounded?: number;
     color?: ColorState;
@@ -31,8 +30,9 @@ export type SliderProps = {
 
 export function Slider(props: SliderProps) {
     let {
-        value, 
+        value = 0, 
         onChangeValue, 
+        onSelectValue,
         renderLabel,
         height = 10,
         rounded = 10,
@@ -49,7 +49,7 @@ export function Slider(props: SliderProps) {
     const thumbProps: Required<SliderProps['thumbProps']> = (() => {
         const {size, borderWidth, borderColor, color: thumbColor, rounded: thumbRounded} = _thumbProps;
         const borderWidthFinal = borderWidth ?? Math.max(2, Math.round(height * 0.10));
-        const thumbSize = size ?? height + borderWidthFinal * 2;
+        const thumbSize = Math.max(height, size ?? height + borderWidthFinal * 2);
         const thumbBorderColor = borderColor ?? backgroundColor;
         const thumbColorFinal = thumbColor ?? color;
         const thumbRoundedFinal = thumbRounded ?? Math.round(thumbSize / 2);
@@ -116,6 +116,7 @@ export function Slider(props: SliderProps) {
                 const newValue = minMax(animatedValueRef.current + valueChange, min - extraValue, max + extraValue);
                 animatedValue.setValue(newValue);
                 setValueState(minMax(newValue, min, max));
+                onChangeValue?.(minMax(newValue, min, max));
 
                 if(Math.round(newValue) % step === 0) {
                     thumbScale.setValue(1);
@@ -151,7 +152,8 @@ export function Slider(props: SliderProps) {
             toValue: newValue, useNativeDriver: false, speed: 2, bounciness: 12
         }).start();
         setValueState(newValue);
-        onChangeValue(newValue);
+        onChangeValue?.(newValue);
+        onSelectValue?.(newValue);
     }
 
     function handleSliderPress(event: GestureResponderEvent) {
@@ -185,7 +187,7 @@ export function Slider(props: SliderProps) {
                     borderRadius: rounded
                 }]}
             >
-                {Array.from({length: steps - 1}, (_, i) => (
+                {/* {Array.from({length: steps - 1}, (_, i) => (
                     <ThemeView key={i} 
                         color={thumbProps.borderColor}
                         style={{
@@ -194,7 +196,7 @@ export function Slider(props: SliderProps) {
                             borderRadius: Math.max(1, Math.round(height * 0.4)),
                         }}
                     />
-                ))}
+                ))} */}
             </ThemeView>
 
             <ThemeView 
@@ -210,7 +212,7 @@ export function Slider(props: SliderProps) {
             />
 
             <Pressable 
-                style={[styles.thumbContainer, { paddingInline: rounded }]}
+                style={[styles.thumbContainer, { paddingInline: Math.min(rounded, height) }]}
                 onPressIn={handleSliderPress}
             >
                 <View style={[styles.thumbArea, {height: height}]}>
@@ -232,28 +234,29 @@ export function Slider(props: SliderProps) {
                         }} 
                     />
 
-                    <ThemeView
-                        color={backgroundColor}
-                        style={[styles.thumbLabel, {
-                            transform: [
-                                {translateX: '-50%'}, 
-                                {scale: thumbScale},
-                                {translateY: labelVisibility.interpolate({
-                                    inputRange: [0, 1],
-                                    outputRange: [-thumbProps.size, -(thumbProps.size + thumbProps.borderWidth * 2 + 4)]
-                                })},
-                            ],
-                            left: animatedValue.interpolate({
-                                inputRange: [min, max],
-                                outputRange: ['0%', '100%']
-                            }),
-                            opacity: labelVisibility
-                        }]}
-                    >
-                        <ThemeText color="text-secondary" style={{fontSize: 12}} >
-                            {renderLabel ? renderLabel(valueState) : valueState.toFixed(toFix)}
-                        </ThemeText>
-                    </ThemeView>
+                    { 
+                        renderLabel ? (
+                            <Animated.View
+                                style={[styles.thumbLabel, {
+                                    transform: [
+                                        {translateX: '-50%'}, 
+                                        {scale: thumbScale},
+                                        {translateY: labelVisibility.interpolate({
+                                            inputRange: [0, 1],
+                                            outputRange: [-thumbProps.size, -(thumbProps.size + thumbProps.borderWidth * 2 + 4)]
+                                        })},
+                                    ],
+                                    left: animatedValue.interpolate({
+                                        inputRange: [min, max],
+                                        outputRange: ['0%', '100%']
+                                    }),
+                                    opacity: labelVisibility
+                                }]}
+                            >
+                                {renderLabel(valueState)}
+                            </Animated.View>
+                        ) : null
+                    }
                 </View>
             </Pressable>
         </View>

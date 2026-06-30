@@ -4,13 +4,15 @@ import { useThemeStore } from "@theme";
 
 export type PressableViewProps = {
     customColor?: string;
+    alpha?: number;
 } & Omit<RippleContainerProps, 'rippleColor'>;
 
 export function PressableView(props: PressableViewProps) {
     const {
         color = 'bg-secondary',
         rippleScale = 2,
-        customColor
+        customColor,
+        alpha = 20
     } = props;
 
     const colors = useThemeStore(store => store.colors);
@@ -22,7 +24,7 @@ export function PressableView(props: PressableViewProps) {
             rippleScale={rippleScale}
             style={{
                 ...props.style,
-                backgroundColor: customColor ? toRgba(customColor, 20) : toRgba(colors[color], 20)
+                backgroundColor: customColor ? toRgba(customColor, alpha) : toRgba(colors[color], alpha)
             }}
         />
     )
