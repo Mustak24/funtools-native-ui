@@ -3,7 +3,7 @@ import { type ColorState, useThemeStore } from "@theme";
 import {
     Animated,
     GestureResponderEvent,
-    Pressable,
+    Pressable as NativePressable,
     PressableProps,
     StyleSheet,
     useAnimatedValue,
@@ -12,6 +12,8 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { toRgba } from "@shared/utils/theme";
+
+const Pressable = Animated.createAnimatedComponent(NativePressable);
 
 export type RippleContainerProps = Omit<
     PressableProps,
@@ -37,8 +39,11 @@ export function RippleContainer({
     rippleScale = 1,
     duration = 300,
     rippleCount = 3,
+    disabled = false,
     ...props
 }: RippleContainerProps) {
+    disabled = disabled === undefined || disabled;
+
     const { top, left } = useSafeAreaInsets();
 
     const _rippleColor = useThemeStore((s) => s.colors[color]);
@@ -50,12 +55,14 @@ export function RippleContainer({
     });
 
     const animatedValue = useAnimatedValue(0);
+    const scaleAnimation = useAnimatedValue(1);
 
     const button = useRef<View>(null);
 
     function handleOnPress(event: GestureResponderEvent) {
-        const { pageX, pageY } = event.nativeEvent;
+        if(disabled) return;
 
+        const { pageX, pageY } = event.nativeEvent;
         button.current?.measureInWindow((x, y, w) => {
             x += left;
             y += top;
@@ -68,8 +75,29 @@ export function RippleContainer({
         onPress?.(event);
     }
 
+    function handleOnPressIn(event: GestureResponderEvent) {
+        if(disabled) return;
+        props.onPressIn?.(event);
+        Animated.spring(scaleAnimation, {
+            toValue: 0.95,
+            useNativeDriver: true,
+        }).start();
+        
+    }
+
+    function handleOnPressOut(event: GestureResponderEvent) {
+        if(disabled) return;
+        props.onPressOut?.(event);
+        Animated.spring(scaleAnimation, {
+            toValue: 1,
+            useNativeDriver: true,
+            bounciness: 5,
+            speed: 10
+        }).start();
+    }
+
     function startAnimation() {
-        if(props.disabled) return;
+        if(disabled) return;
         Animated.timing(animatedValue, {
             toValue: 1,
             duration,
@@ -83,8 +111,11 @@ export function RippleContainer({
         <Pressable
             ref={button}
             {...props}
+            disabled={disabled}
             onPress={handleOnPress}
-            style={[style, styles.container]}
+            onPressIn={handleOnPressIn}
+            onPressOut={handleOnPressOut}
+            style={[style, styles.container, { transform: [{scale: scaleAnimation}] }]}
         >
             <View style={[styles.rippleContainer, { ...position }]}>
                 {[...new Array(Math.min(rippleCount, 5))].map((_, index) => (

@@ -17,6 +17,8 @@ export function Popup({id}: {id: string}) {
         <Dialog 
             visible={visible}
             onHide={cleanupPopups}
+            onClose={() => hidePopup(id)}
+            
             containerProps={{style: styles.dialog}}
             style={[{padding: 12}, customStyles?.dialog]}
             maxWidth={typeof customStyles?.dialog.maxWidth === 'number' ? customStyles.dialog.maxWidth : 440}
