@@ -42,7 +42,7 @@
   ],
   "scripts": {
     "build": "tsup",
-    "dev:yalc": "chokidar \"src/**/*\" -c \"npm run build && yalc push\" --polling",
+    "dev:yalc": "chokidar \"src/**/*\" --debounce 2400 -c \"npm run build && yalc push\" --polling",
     "dev:npm": "chokidar \"src/**/*\" -c \"npm run build && npm link\" --polling",
     "lint": "eslint src --ext .ts,.tsx"
   },

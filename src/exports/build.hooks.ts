@@ -1,5 +1,7 @@
 export {
     usePermission,
     type RenderModalUIProps,
-    type usePermissionProps
+    type usePermissionProps,
+
+    useAnimatedValue
 } from '@hooks';
