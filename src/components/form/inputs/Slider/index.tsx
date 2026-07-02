@@ -15,7 +15,6 @@ export type SliderProps = {
     rounded?: number;
     color?: ColorState;
     backgroundColor?: ColorState;
-    toFix?: number;
 
     step?: number;
 
@@ -36,7 +35,6 @@ export function Slider(props: SliderProps) {
         renderLabel,
         height = 10,
         rounded = 10,
-        toFix = 0,
         step = 0,
         color = 'primary',
         minmax: [min, max] = [0, 100],
