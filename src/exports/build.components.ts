@@ -31,6 +31,9 @@ export {
 
     EmptyState,
     type EmptyStateProps,
+
+    Drawer,
+    type DrawerProps
 } from '@components';
 
 export { default as FuntoolsNativeUIProvider } from '../FuntoolsNativeUIProvider';
