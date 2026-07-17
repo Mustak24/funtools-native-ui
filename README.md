@@ -28,6 +28,7 @@ npm install react react-native react-native-safe-area-context @funtools/store lu
 - `Button`
 - `CenterModal`
 - `Dialog`
+- `Drawer`
 - `EmptyState`
 - `IconButton`
 - `Input`
