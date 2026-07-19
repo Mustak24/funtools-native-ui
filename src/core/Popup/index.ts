@@ -5,5 +5,6 @@ export {
 
 export {
     Alert,
-    Confirm
+    Confirm,
+    showPopup
 } from './services'

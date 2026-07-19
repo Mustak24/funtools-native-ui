@@ -2,6 +2,7 @@ export {
     Alert, 
     Confirm,
     usePopup,
+    showPopup,
     
     Icon,
     type IconName,
