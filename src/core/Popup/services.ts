@@ -1,10 +1,11 @@
-import { ALERT_INFO, CONFIRM_INFO, INFO_TYPE, popupServiceRef } from "./Provider"
+import { ALERT_INFO, CONFIRM_INFO, INFO_TYPE, POPUP, popupServiceRef } from "./Provider"
 
 
 function executeServiceCall(type: 'alert' | 'confirm', method: INFO_TYPE, info: any) {
     if (!popupServiceRef.current) {
         throw new Error(`Popup service not initialized. Render <PopupProvider> first.`);
     }
+
     if (type === 'alert') {
         popupServiceRef.current.showAlert(method, info);
     } else {
@@ -27,3 +28,11 @@ export const Confirm = {
     info: (info: CONFIRM_INFO) => executeServiceCall('confirm', 'info', info),
     default: (info: CONFIRM_INFO) => executeServiceCall('confirm', 'default', info)
 };
+
+export function showPopup(info: POPUP) {
+    if (!popupServiceRef.current) {
+        throw new Error(`Popup service not initialized. Render <PopupProvider> first.`);
+    }
+
+    popupServiceRef.current.showPopup(info);
+}

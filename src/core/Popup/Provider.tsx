@@ -6,11 +6,11 @@ import { randomUUID } from "@shared/utils/common";
 import { Popup } from "./Popup";
 
 
-type Actions = Array<Pick<ButtonProps, 'title'| 'variant' | 'color' | 'rounded' | 'loading' | 'style'> & {
+type Actions = Array<Omit<ButtonProps, 'onPress'> & {
     onPress: (event: GestureResponderEvent, options: Parameters<NonNullable<ButtonProps['onPress']>>['1'] & {hide: () => void;}) => void;
 }>;
 
-type POPUP = {
+export type POPUP = {
     title: string;
     actions: Actions;
     icon?: IconName | (() => ReactNode);
@@ -19,11 +19,11 @@ type POPUP = {
     closeAfterAction?: boolean;
 }
 
-export type ALERT_INFO = Omit<POPUP, 'actions'> & {
+export type ALERT_INFO = Omit<POPUP, 'actions' | 'closeAfterAction'> & {
     action?: Omit<Actions[0], 'color'>;
 };
 
-export type CONFIRM_INFO = Omit<POPUP, 'actions'> & {
+export type CONFIRM_INFO = Omit<POPUP, 'actions' | 'closeAfterAction'> & {
     onConfirm: Actions[0]['onPress'];
     confirm?: Omit<Actions[0], 'color' | 'onPress'>;
     cancel?: Omit<Actions[0], 'color' | 'onPress'>;
@@ -51,6 +51,7 @@ export const popupServiceRef = {
     current: null as null | {
         showAlert: (type: INFO_TYPE, info: ALERT_INFO) => void;
         showConfirm: (type: INFO_TYPE, info: CONFIRM_INFO) => void;
+        showPopup: (info: POPUP) => void;
     }
 }
 
@@ -66,8 +67,8 @@ export function PopupProvider({ children }: {children: ReactNode}) {
         setPopups(prev => [...prev, {
             id: randomUUID(),
             visible: true,
-            closeAfterAction: false,
-            ...info
+            ...info,
+            closeAfterAction: info.closeAfterAction ?? true,
         }]);
     }
 
@@ -102,26 +103,28 @@ export function PopupProvider({ children }: {children: ReactNode}) {
             closeAfterAction: true,
             actions: [
                 {
+                    ...info.cancel,
                     title: info.cancel?.title ?? 'Cancel',
                     variant: info.cancel?.variant ?? 'outlined',
                     color: 'text',
                     rounded: info.cancel?.rounded ?? 100,
                     style: {...info.cancel?.style, flex: 1},
-                    onPress: info?.onCancel ?? ((_, {hide}) => hide())
+                    onPress: info?.onCancel ?? ((_, {hide}) => hide()),
                 },
                 {
+                    ...info.confirm,
                     title: info.confirm?.title ?? 'Confirm',
                     variant: info.confirm?.variant ?? 'solid',
                     color: type === 'default' ? 'text' : type,
                     rounded: info.confirm?.rounded ?? 100,
                     style: {...info.confirm?.style, flex: 1},
-                    onPress: info.onConfirm ?? ((_, {hide}) => hide())
+                    onPress: info.onConfirm ?? ((_, {hide}) => hide()),
                 }
             ]
         })
     }
 
-    popupServiceRef.current = { showAlert, showConfirm };
+    popupServiceRef.current = { showAlert, showConfirm, showPopup };
 
     const Alert = {
         success: (info: ALERT_INFO) => showAlert('success', info),

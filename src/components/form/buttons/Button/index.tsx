@@ -7,6 +7,7 @@ import {
     Icon,
     type IconName,
     ThemeText,
+    ThemeTextProps,
 } from "@core";
 
 import { SpinnerLoader, type SpinnerLoaderProps } from "@components";
@@ -30,6 +31,8 @@ export type ButtonProps = Omit<
     rounded?: number;
     fontSize?: number;
     height?: number;
+
+    titleProps?: Omit<ThemeTextProps, 'children'>;
 
     autoDisabled?: boolean;
     loading?: boolean;
@@ -55,6 +58,7 @@ export function Button({
     rounded = 12,
     onPress,
     autoDisabled = false,
+    titleProps,
     ...props
 }: ButtonProps) {
     
@@ -141,7 +145,11 @@ export function Button({
                 </Show>
             </Show>
 
-            <ThemeText textColor={text} style={{ fontSize }}>
+            <ThemeText 
+                {...titleProps} 
+                textColor={titleProps?.textColor || text} 
+                style={[{ fontSize }, titleProps?.style]}
+            >
                 {title}
             </ThemeText>
 
