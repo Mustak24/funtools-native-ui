@@ -21,8 +21,8 @@ export function Popup({id}: {id: string}) {
             
             containerProps={{style: styles.dialog}}
             style={[{padding: 12}, customStyles?.dialog]}
-            maxWidth={typeof customStyles?.dialog.maxWidth === 'number' ? customStyles.dialog.maxWidth : 440}
-            maxHeight={typeof customStyles?.dialog.maxWidth === 'number' ? customStyles.dialog.maxWidth : undefined}
+            maxWidth={typeof customStyles?.dialog?.maxWidth === 'number' ? customStyles.dialog.maxWidth : 440}
+            maxHeight={typeof customStyles?.dialog?.maxWidth === 'number' ? customStyles.dialog.maxWidth : undefined}
         >
             <View style={[styles.header]} >
                 <IconButton

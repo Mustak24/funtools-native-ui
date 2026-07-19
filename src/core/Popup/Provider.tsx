@@ -15,7 +15,7 @@ export type POPUP = {
     actions: Actions;
     icon?: IconName | (() => ReactNode);
     subtitle?: string;
-    styles?: Record<'dialog' | 'content' | 'title' | 'subtitle' | 'footer', ViewStyle>;
+    styles?: Partial<Record<'dialog' | 'content' | 'title' | 'subtitle' | 'footer', ViewStyle>>;
     closeAfterAction?: boolean;
 }
 
