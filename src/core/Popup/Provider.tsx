@@ -17,13 +17,14 @@ export type POPUP = {
     subtitle?: string;
     styles?: Partial<Record<'dialog' | 'content' | 'title' | 'subtitle' | 'footer', ViewStyle>>;
     closeAfterAction?: boolean;
+    blockSystemCloseRequest?: boolean;
 }
 
-export type ALERT_INFO = Omit<POPUP, 'actions' | 'closeAfterAction'> & {
+export type ALERT_INFO = Omit<POPUP, 'actions'> & {
     action?: Omit<Actions[0], 'color'>;
 };
 
-export type CONFIRM_INFO = Omit<POPUP, 'actions' | 'closeAfterAction'> & {
+export type CONFIRM_INFO = Omit<POPUP, 'actions'> & {
     onConfirm: Actions[0]['onPress'];
     confirm?: Omit<Actions[0], 'color' | 'onPress'>;
     cancel?: Omit<Actions[0], 'color' | 'onPress'>;
@@ -85,7 +86,7 @@ export function PopupProvider({ children }: {children: ReactNode}) {
     function showAlert(type: INFO_TYPE, info: ALERT_INFO) {
         showPopup({
             ...info,
-            closeAfterAction: true,
+            closeAfterAction: info.closeAfterAction ?? true,
             actions: [{
                 title: info.action?.title ?? 'OK',
                 variant: info.action?.variant ?? 'solid',
@@ -100,7 +101,7 @@ export function PopupProvider({ children }: {children: ReactNode}) {
     function showConfirm(type: INFO_TYPE, info: CONFIRM_INFO) {
         showPopup({
             ...info,
-            closeAfterAction: true,
+            closeAfterAction: info.closeAfterAction ?? true,
             actions: [
                 {
                     ...info.cancel,

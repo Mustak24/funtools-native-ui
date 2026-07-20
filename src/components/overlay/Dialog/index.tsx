@@ -16,6 +16,7 @@ type DialogProps = {
     blockMargin?: number | `${number}%`;
     backdropVariant?: ColorState;
     backgroundContent?: ReactNode;
+    blockSystemCloseRequest?: boolean;
     animationConfig?: {
         speed?: number;
         bounciness?: number;
@@ -29,7 +30,7 @@ type DialogComponent = ((props: DialogProps) => JSX.Element) & {
 }
 
 const Dialog: DialogComponent = (props: DialogProps) => {
-    const {
+    let {
         visible,
         children,
         onClose,
@@ -42,8 +43,11 @@ const Dialog: DialogComponent = (props: DialogProps) => {
         backdropVariant = 'text-secondary',
         backgroundContent,
         animationConfig,
+        blockSystemCloseRequest = false,
         ...modalProps
     } = props;
+
+    blockSystemCloseRequest = blockSystemCloseRequest === undefined || blockSystemCloseRequest;
 
     if(animationConfig?.speed) animationConfig.speed = 5;
     if(animationConfig?.bounciness) animationConfig.bounciness = 20;
@@ -83,6 +87,10 @@ const Dialog: DialogComponent = (props: DialogProps) => {
         })
     }
 
+    function handleClose() {
+        if(!blockSystemCloseRequest) onClose?.();
+    }
+
     useEffect(() => {
         !!visible ? handleShow() : handleHide();
     }, [visible])
@@ -95,7 +103,7 @@ const Dialog: DialogComponent = (props: DialogProps) => {
             animationType="none"
             onRequestClose={(event) => {
                 modalProps.onRequestClose?.(event);
-                onClose?.();
+                handleClose();
             }}
         >
             <ThemeView
@@ -123,14 +131,14 @@ const Dialog: DialogComponent = (props: DialogProps) => {
 
                 <RippleContainer
                     style={{flex: 1, width: '100%'}}
-                    onPress={onClose}
+                    onPress={handleClose}
                     rippleOpacity={0.2}
                 />
 
                 <View style={{width: '100%', flexDirection: 'row'}} >
                     <RippleContainer
                         style={{flex: 1}}
-                        onPress={onClose}
+                        onPress={handleClose}
                         rippleOpacity={0.2}
                     />
 
@@ -169,14 +177,14 @@ const Dialog: DialogComponent = (props: DialogProps) => {
 
                     <RippleContainer
                         style={{flex: 1}}
-                        onPress={onClose}
+                        onPress={handleClose}
                         rippleOpacity={0.2}
                     />
                 </View>
 
                 <RippleContainer
                     style={{flex: 1, width: '100%'}}
-                    onPress={onClose}
+                    onPress={handleClose}
                     rippleOpacity={0.2}
                 />
             </ThemeView>

@@ -18,6 +18,7 @@ export type DrawerProps = {
     containerProps?: Omit<ThemeViewProps, 'children'>;
     backdropVariant?: ColorState;
     backgroundContent?: ReactNode;
+    blockSystemCloseRequest?: boolean;
     rounded?: number;
     padding?: number;
 } & Omit<ModalProps, 'transparent' | 'animationType'>;
@@ -42,7 +43,7 @@ export function useDrawerContext() {
 }
 
 export const Drawer: DrawerComponent = (props: DrawerProps) => {
-    const {
+    let {
         visible,
         children,
         onClose,
@@ -53,8 +54,11 @@ export const Drawer: DrawerComponent = (props: DrawerProps) => {
         direction = 'bottom',
         rounded = 12,
         padding = 12,
+        blockSystemCloseRequest = false,
         ...modalProps
     } = props;
+
+    blockSystemCloseRequest = blockSystemCloseRequest === undefined || blockSystemCloseRequest;
     
     const { width: MAX_WIDTH, height: MAX_HEIGHT } = useWindowDimensions();
 
@@ -84,6 +88,12 @@ export const Drawer: DrawerComponent = (props: DrawerProps) => {
         })
     }
 
+    function handleClose() {
+        if(!blockSystemCloseRequest) {
+            onClose?.();
+        }
+    }
+
     useEffect(() => {
         !!visible ? handleShow() : handleHide();
     }, [visible])
@@ -102,7 +112,7 @@ export const Drawer: DrawerComponent = (props: DrawerProps) => {
                 animationType="none"
                 onRequestClose={(event) => {
                     modalProps.onRequestClose?.(event);
-                    onClose?.();
+                    handleClose();
                 }}
             >
                 <ThemeView
@@ -133,7 +143,7 @@ export const Drawer: DrawerComponent = (props: DrawerProps) => {
                     <View style={{width: '100%', height: '100%', position: 'relative'}} >
                         <RippleContainer
                             style={{position: 'absolute', flex: 1, width: MAX_WIDTH, height: MAX_HEIGHT, top: 0, left: 0}}
-                            onPress={onClose}
+                            onPress={handleClose}
                             rippleOpacity={0.2}
                         />
 

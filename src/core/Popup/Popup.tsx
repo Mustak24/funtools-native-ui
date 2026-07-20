@@ -11,14 +11,23 @@ export function Popup({id}: {id: string}) {
     const popup = popups.find(popup => popup.id === id);
     if(!popup) return null;
     
-    const { icon, title, subtitle, actions, styles: customStyles, visible, closeAfterAction } = popup;
+    const { 
+        icon, 
+        title, 
+        visible, 
+        actions, 
+        subtitle, 
+        closeAfterAction, 
+        styles: customStyles, 
+        blockSystemCloseRequest 
+    } = popup;
 
     return (
         <Dialog 
             visible={visible}
             onHide={cleanupPopups}
             onClose={() => hidePopup(id)}
-            
+            blockSystemCloseRequest={blockSystemCloseRequest ?? false}
             containerProps={{style: styles.dialog}}
             style={[{padding: 12}, customStyles?.dialog]}
             maxWidth={typeof customStyles?.dialog?.maxWidth === 'number' ? customStyles.dialog.maxWidth : 440}
