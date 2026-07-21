@@ -15,10 +15,9 @@ export default function Panels(props: PanelProps) {
     return (
         <ShowWithAnimation
             when={panels[0].value === activePanelValue}
-            containerProps={{style: {flex: 1, width: '100%'}}}
+            containerProps={{style: {flex: 1, width: '100%'}, alpha: 0}}
             style={{flex: 1, width: '100%'}}
             removeOnHide={removePanelOnHide}
-            
             otherwise={
                 <Panels {...props} panels={panels.slice(1)}  />
             }
