@@ -57,7 +57,7 @@ export function Button({
     fontSize,
     rounded = 12,
     onPress,
-    autoDisabled = false,
+    autoDisabled = true,
     titleProps,
     ...props
 }: ButtonProps) {
@@ -76,7 +76,7 @@ export function Button({
     color = states.color ?? color;
     loading = states.loading ?? loading;
     
-    if(autoDisabled === undefined || autoDisabled) {
+    if(autoDisabled) {
         disabled = disabled || loading;
     }
     

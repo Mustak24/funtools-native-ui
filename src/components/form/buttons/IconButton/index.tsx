@@ -42,7 +42,7 @@ export function IconButton({
     loading = false,
     loaderName,
     disabled = false,
-    autoDisabled = false,
+    autoDisabled = true,
     ...props
 }: IconButtonProps) {
 
@@ -62,7 +62,7 @@ export function IconButton({
     color = states.color ?? color;
     loading = states.loading ?? loading;
 
-    if(autoDisabled === undefined || autoDisabled) {
+    if(autoDisabled) {
         disabled = disabled || loading;
     }
 
