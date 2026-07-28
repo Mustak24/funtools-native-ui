@@ -18,6 +18,7 @@ export default function OutsideLabel(props: InputVariantProps) {
         containerProps,
         backgroundColor,
         color = 'bg-secondary',
+        required = false,
         ...inputProps
     } = props;
 
@@ -47,6 +48,9 @@ export default function OutsideLabel(props: InputVariantProps) {
                 style={{ fontSize: 12, fontWeight: "500" }} 
             >
                 {label}
+                <Show when={required} >
+                    <ThemeText color="error" > *</ThemeText>
+                </Show>
             </ThemeText>
 
             <ThemeView 

@@ -19,6 +19,7 @@ export type InputVariantProps = TextInputProps & {
     containerProps?: ViewProps;
     color?: ColorState;
     backgroundColor?: string;
+    required?: boolean;
 }
 
 export type InputProps = Omit<InputVariantProps, 'isFocused'> & {
