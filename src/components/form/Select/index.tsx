@@ -17,10 +17,20 @@ export type SelectProps<T extends DATA> = {
     placeholder?: string;
     icon?: IconName;
     required?: boolean;
-    inputProps?: Omit<TextInputProps, 'value' | 'onChangeText' | 'readOnly'>;
+    disabled?: boolean;
+    variant?: TextInputProps['variant'];
     renderItem?: ItemSelectorProps<T>['renderItem'];
     selectorTitle?: string;
-} & Omit<ItemSelectorProps<T>, 'keyExtractor'| 'visible' | 'onClose' | 'renderItem' | 'title'>;
+
+    inputProps?: Omit<
+        TextInputProps, 
+        'value' | 'onChangeText' | 'readOnly' | 'variant' | 'required'  | 'disabled' | 'placeholder' | 'icon'
+    >;
+
+} & Omit<
+    ItemSelectorProps<T>, 
+    'keyExtractor' | 'visible' | 'onClose' | 'renderItem' | 'title' | 'onSelectItem' | 'isSelected'
+>;
 
 
 export function Select<T extends DATA>(props: SelectProps<T>) {
@@ -28,10 +38,12 @@ export function Select<T extends DATA>(props: SelectProps<T>) {
         value,
         onChangeValue,
         renderLabel,
-        required = false,
         inputProps,
         renderItem,
         selectorTitle,
+        variant,
+        required,
+        disabled,
         ...selectorProps
     } = props;
 
@@ -47,10 +59,12 @@ export function Select<T extends DATA>(props: SelectProps<T>) {
             <TextInput
                 {...inputProps}
                 readOnly
+                variant={variant}
                 value={renderLabel?.(value) ?? value}
-                postChild={ <Icon name="ChevronDown"/> }
+                postChild={inputProps?.postChild ?? <Icon name="ChevronDown"/>}
                 pointerEvents="none"
                 containerProps={{
+                    ...inputProps?.containerProps,
                     children: (
                         <Pressable 
                             style={{position: 'absolute', inset: 0, zIndex: 10, width: '100%', height: '100%'}}
