@@ -84,7 +84,7 @@ export function Input(props: InputProps) {
                 ...inputProps.containerProps,
                 style: [
                     inputProps.containerProps?.style,
-                    { opacity: inputProps.disabled ? 0.5 : 1 }
+                    { opacity: inputProps.disabled ? 0.5 : 1, position: 'relative' }
                 ]
             }}
 

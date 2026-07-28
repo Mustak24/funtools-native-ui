@@ -24,7 +24,7 @@ export type SelectProps<T extends DATA> = {
 
     inputProps?: Omit<
         TextInputProps, 
-        'value' | 'onChangeText' | 'readOnly' | 'variant' | 'required'  | 'disabled' | 'placeholder' | 'icon'
+        'value' | 'onChangeText' | 'readOnly' | 'variant' | 'required'  | 'disabled' | 'placeholder' | 'icon' | 'label' | 'placeholder'
     >;
 
 } & Omit<
@@ -38,12 +38,15 @@ export function Select<T extends DATA>(props: SelectProps<T>) {
         value,
         onChangeValue,
         renderLabel,
-        inputProps,
         renderItem,
         selectorTitle,
         variant,
         required,
         disabled,
+        label,
+        placeholder,
+        icon,
+        inputProps,
         ...selectorProps
     } = props;
 
@@ -60,15 +63,23 @@ export function Select<T extends DATA>(props: SelectProps<T>) {
                 {...inputProps}
                 readOnly
                 variant={variant}
+                required={required}
+                icon={icon}
+                label={label}
+                disabled={disabled}
+                placeholder={placeholder}
                 value={renderLabel?.(value) ?? value}
                 postChild={inputProps?.postChild ?? <Icon name="ChevronDown"/>}
                 pointerEvents="none"
                 containerProps={{
                     ...inputProps?.containerProps,
                     children: (
-                        <Pressable 
+                        <Pressable
+                            disabled={disabled}
                             style={{position: 'absolute', inset: 0, zIndex: 10, width: '100%', height: '100%'}}
-                            onPress={() => setIsOptionVisible(true)}
+                            onPress={() => {
+                                if(disabled) return;
+                                setIsOptionVisible(true)}}
                         />
                     )
                 }}
