@@ -40,7 +40,7 @@ export default function SnapView<T>({
     onIndexChange,
 }: SnapViewProps<T>) {
     const flatListRef = useRef<FlatList<T>>(null);
-    const timerRef = useRef<number | null>(null);
+    const timerRef = useRef<any>(null);
     const currentIndex = useRef(initialIndex);
 
     const [activeIndex, setActiveIndex] = useState(initialIndex);
