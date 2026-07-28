@@ -3,5 +3,6 @@ export {
     type RenderModalUIProps,
     type usePermissionProps,
 
-    useAnimatedValue
+    useAnimatedValue,
+    useKeyboardHeight
 } from '@hooks';

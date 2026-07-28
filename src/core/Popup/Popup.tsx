@@ -19,7 +19,7 @@ export function Popup({id}: {id: string}) {
         subtitle, 
         closeAfterAction, 
         styles: customStyles, 
-        blockSystemCloseRequest 
+        blockSystemCloseRequest
     } = popup;
 
     return (
@@ -99,7 +99,9 @@ const styles = StyleSheet.create({
         position: 'relative'
     },
     content: {
-        gap: 8,
+        gap: 8, 
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     header: {
         flexDirection: 'row',
