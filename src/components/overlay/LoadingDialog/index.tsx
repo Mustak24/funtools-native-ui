@@ -1,8 +1,8 @@
 import { StyleSheet, View } from "react-native";
-import SnapView from "../../container/SnapView";
 import { Dialog } from "../Dialog";
 import { SpinnerLoader } from "../../feedback";
 import { ThemeText } from "@core";
+import { SnapView } from "../../container";
 
 export type LoadingDialogProps = {
     visible: boolean;

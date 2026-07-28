@@ -42,7 +42,10 @@ export {
     type RadioProps,
 
     Skeleton,
-    type SkeletonProps
+    type SkeletonProps,
+
+    SnapView,
+    type SnapViewProps
 } from '@components';
 
 export { default as FuntoolsNativeUIProvider } from '../FuntoolsNativeUIProvider';

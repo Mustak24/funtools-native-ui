@@ -9,7 +9,7 @@ import {
 
 type Direction = 'horizontal' | 'vertical';
 
-interface SnapViewProps<T> {
+export type SnapViewProps<T> = {
     data: T[];
     renderItem: ({item, index}: {item: T; index: number}) => React.ReactNode;
 
@@ -26,7 +26,7 @@ interface SnapViewProps<T> {
     onIndexChange?: (index: number) => void;
 }
 
-export default function SnapView<T>({
+export function SnapView<T>({
     data,
     renderItem,
     width,
