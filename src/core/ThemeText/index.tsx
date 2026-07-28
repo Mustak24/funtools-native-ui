@@ -26,7 +26,7 @@ export const ThemeText = forwardRef<Text, ThemeTextProps>((props, ref) => {
         <Animated.Text
             {...props}
             ref={ref}
-            style={[style, { color }]}
+            style={[{ color }, style]}
         />
     )
 })

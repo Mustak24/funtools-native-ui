@@ -6,6 +6,7 @@ export type PanelSwitcherProps = {
     activePanelValue: string;
     panels: Array<{ value: string; content: ReactNode }>;
     animationStyle?: ShowWithAnimationProps['animationStyle'],
+    contentContainerProps?: ShowWithAnimationProps;
     removePanelOnHide?: boolean,
 } & Omit<ThemeViewProps, 'children'>
 
@@ -15,6 +16,7 @@ export function PanelSwitcher(props: PanelSwitcherProps) {
         panels,
         animationStyle,
         removePanelOnHide,
+        contentContainerProps,
         ...themeViewProps
     } = props;
 
@@ -30,6 +32,8 @@ export function PanelSwitcher(props: PanelSwitcherProps) {
                 panels={panels}
                 animationStyle={animationStyle}
                 removePanelOnHide={removePanelOnHide}
+                contentContainerProps={contentContainerProps}
+
             />
         </ThemeView>
     )

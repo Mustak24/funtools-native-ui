@@ -1,6 +1,6 @@
 {
   "name": "@funtools/native-ui",
-  "version": "2.1.12",
+  "version": "2.1.13",
   "description": "UI component library for React Native",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",

@@ -1,23 +1,33 @@
 import { ShowWithAnimation } from "@core";
 import { PanelSwitcherProps } from ".";
-type PanelProps = Pick<PanelSwitcherProps, 'activePanelValue' | 'panels' | 'animationStyle' | 'removePanelOnHide'>;
+
+type PanelProps = Pick<PanelSwitcherProps, 'activePanelValue' | 'panels' | 'animationStyle' | 'removePanelOnHide' | 'contentContainerProps'>;
 
 export default function Panels(props: PanelProps) {
     const {
         activePanelValue,
         panels,
         animationStyle,
-        removePanelOnHide
+        removePanelOnHide,
+        contentContainerProps
     } = props
 
     if(panels.length === 0) return null;
 
     return (
         <ShowWithAnimation
+            {...contentContainerProps}
             when={panels[0].value === activePanelValue}
-            containerProps={{style: {flex: 1, width: '100%'}, alpha: 0}}
-            style={{flex: 1, width: '100%'}}
-            removeOnHide={removePanelOnHide}
+            removeOnHide={contentContainerProps?.removeOnHide ?? removePanelOnHide}
+
+            containerProps={{
+                ...contentContainerProps?.containerProps, 
+                style: {height: '100%', width: '100%'}, 
+                alpha: 0
+            }}
+            
+            style={[{height: '100%', width: '100%'}, contentContainerProps?.style]}
+            
             otherwise={
                 <Panels {...props} panels={panels.slice(1)}  />
             }

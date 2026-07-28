@@ -5,10 +5,11 @@ import { AnimatedInterpolValue } from "@shared/types/native";
 import { toRgba } from "@shared/utils/theme";
 
 
-export type ThemeViewProps = ViewProps & {
+export type ThemeViewProps = Omit<ViewProps, 'style'> & {
     alpha?: number;
     color?: ColorState;
     backgroundColor?: string | AnimatedInterpolValue;
+    style?: Animated.AnimatedProps<ViewProps>['style'];
 }
 
 
@@ -30,7 +31,7 @@ export const ThemeView = forwardRef<View, ThemeViewProps>((props, ref) => {
         <Animated.View
             {...props}
             ref={ref}
-            style={[style, {backgroundColor}]}
+            style={[{backgroundColor}, style]}
         />
     )
 })

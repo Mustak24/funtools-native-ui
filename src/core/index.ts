@@ -5,3 +5,4 @@ export * from './ThemeView';
 export * from './RippleContainer';
 export * from './ShowWithAnimation';
 export * from './Popup';
+export * from './Input';

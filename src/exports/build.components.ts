@@ -45,7 +45,25 @@ export {
     type SkeletonProps,
 
     SnapView,
-    type SnapViewProps
+    type SnapViewProps,
+    
+    TextInput,
+    type TextInputProps,
+
+    ItemSelector,
+    type ItemSelectorProps,
+
+    Searchbar,
+    type SearchbarProps,
+
+    PasswordInput,
+    type PasswordInputProps,
+
+    TelInput,
+    type TelInputProps,
+
+    Select,
+    type SelectProps,
 } from '@components';
 
 export { default as FuntoolsNativeUIProvider } from '../FuntoolsNativeUIProvider';

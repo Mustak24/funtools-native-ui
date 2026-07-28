@@ -22,4 +22,7 @@ export {
     
     ThemeView,
     type ThemeViewProps,
+
+    Input,
+    type InputProps
 } from '@core';
