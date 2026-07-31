@@ -1,4 +1,3 @@
-export * from './buttons';
 export * from './inputs.legacy';
 export * from './Radio'
 export * from './TextInput';

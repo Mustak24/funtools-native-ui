@@ -1,5 +1,4 @@
-import { Button, IconButton } from "../../components/form";
-import { Dialog } from "../../components/overlay/Dialog";
+import { Button, Dialog, IconButton } from "@components";
 import { StyleSheet, View } from "react-native";
 import { Icon, Show, ThemeText } from "@core";
 import { usePopupContext } from "./Provider";
@@ -23,7 +22,7 @@ export function Popup({id}: {id: string}) {
     } = popup;
 
     return (
-        <Dialog 
+        <Dialog
             visible={visible}
             onHide={cleanupPopups}
             onClose={() => hidePopup(id)}

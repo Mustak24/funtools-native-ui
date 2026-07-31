@@ -9,3 +9,5 @@ dist/
 .vscode/
 TEST_APP/
 *.tgz
+storybook-static/
+.storybook_home/

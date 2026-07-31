@@ -1,7 +1,7 @@
 import { TextInput, TextInputProps } from '../TextInput';
 import { useState } from 'react';
 import { PanelSwitcher } from '../../logic';
-import { IconButton } from '../buttons';
+import { IconButton } from '../../primitives/buttons';
 
 
 export type PasswordInputProps = Omit<TextInputProps, 'postChild'>

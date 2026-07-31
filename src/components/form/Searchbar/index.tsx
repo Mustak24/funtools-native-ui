@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { TextInput, TextInputProps } from "../TextInput";
 import { Show } from "@core";
-import { IconButton } from "../buttons";
+import { IconButton } from "../../primitives/buttons";
 
 export type SearchbarProps = Omit<TextInputProps, 'postChild'> & {
     onSearch?: (value: string) => void;
