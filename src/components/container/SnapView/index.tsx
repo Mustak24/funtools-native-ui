@@ -1,7 +1,8 @@
 import { ThemeView } from '@core';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useImperativeHandle, useRef, useState} from 'react';
 import {
     FlatList,
+    FlatListProps,
     NativeScrollEvent,
     NativeSyntheticEvent,
     View,
@@ -9,7 +10,7 @@ import {
 
 type Direction = 'horizontal' | 'vertical';
 
-export type SnapViewProps<T> = {
+export type SnapViewProps<T> = FlatListProps<T> & {
     data: T[];
     renderItem: ({item, index}: {item: T; index: number}) => React.ReactNode;
 
@@ -18,12 +19,13 @@ export type SnapViewProps<T> = {
 
     direction?: Direction;
 
+    keyExtractor?: (item: T, index: number) => string;
     autoScroll?: boolean;
     interval?: number;
     showDots?: boolean;
     loop?: boolean;
-    initialIndex?: number;
-    onIndexChange?: (index: number) => void;
+    onScrollIndexChange?: (index: number) => void;
+    scrollIndex?: number;
 }
 
 export function SnapView<T>({
@@ -32,18 +34,20 @@ export function SnapView<T>({
     width,
     height,
     direction = 'horizontal',
-    autoScroll = true,
+    autoScroll = false,
     interval = 3000,
-    showDots = true,
+    showDots = false,
     loop = true,
-    initialIndex = 0,
-    onIndexChange,
+    onScrollIndexChange,
+    keyExtractor,
+    scrollIndex = 0,
+    ...flatListProps
 }: SnapViewProps<T>) {
     const flatListRef = useRef<FlatList<T>>(null);
     const timerRef = useRef<any>(null);
-    const currentIndex = useRef(initialIndex);
+    const currentIndex = useRef(scrollIndex);
 
-    const [activeIndex, setActiveIndex] = useState(initialIndex);
+    const [activeIndex, setActiveIndex] = useState(scrollIndex);
 
     const stopAutoScroll = () => {
         if (timerRef.current) {
@@ -60,7 +64,7 @@ export function SnapView<T>({
 
         currentIndex.current = index;
         setActiveIndex(index);
-        onIndexChange?.(index);
+        onScrollIndexChange?.(index);
     };
 
     const startAutoScroll = () => {
@@ -84,43 +88,42 @@ export function SnapView<T>({
         }, interval);
     };
 
-    useEffect(() => {
-        if (initialIndex > 0) {
-            setTimeout(() => {
-                scrollTo(initialIndex);
-            }, 100);
-        }
-
-        startAutoScroll();
-
-        return stopAutoScroll;
-    }, []);
-
     const onMomentumScrollEnd = (
         event: NativeSyntheticEvent<NativeScrollEvent>,
     ) => {
         const offset =
-            direction === 'horizontal'
-                ? event.nativeEvent.contentOffset.x
-                : event.nativeEvent.contentOffset.y;
-
+        direction === 'horizontal'
+        ? event.nativeEvent.contentOffset.x
+        : event.nativeEvent.contentOffset.y;
+        
         const size = direction === 'horizontal' ? width : height;
-
+        
         const index = Math.round(offset / size);
-
+        
         currentIndex.current = index;
         setActiveIndex(index);
-        onIndexChange?.(index);
+        onScrollIndexChange?.(index);
     };
 
+
+    useEffect(() => {
+        startAutoScroll();
+        return stopAutoScroll;
+    }, []);
+
+    useEffect(() => {
+        scrollTo(scrollIndex);
+    }, [scrollIndex])
+    
     return (
         <View style={{width, height}}>
             <FlatList
+                {...flatListProps}
                 ref={flatListRef}
                 data={data}
                 horizontal={direction === 'horizontal'}
                 pagingEnabled
-                keyExtractor={(_, index) => index.toString()}
+                keyExtractor={keyExtractor ?? ((_, index) => index.toString())}
                 showsHorizontalScrollIndicator={false}
                 showsVerticalScrollIndicator={false}
                 bounces={false}

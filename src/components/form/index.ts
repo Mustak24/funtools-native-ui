@@ -6,3 +6,4 @@ export * from './Slider';
 export * from './PasswordInput';
 export * from './TelInput';
 export * from './Select';
+export * from './DatePicker';
