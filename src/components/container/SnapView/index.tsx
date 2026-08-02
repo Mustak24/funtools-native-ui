@@ -1,5 +1,5 @@
 import { ThemeView } from '@core';
-import React, {useEffect, useImperativeHandle, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
     FlatList,
     FlatListProps,
@@ -13,12 +13,13 @@ type Direction = 'horizontal' | 'vertical';
 export type SnapViewProps<T> = FlatListProps<T> & {
     data: T[];
     renderItem: ({item, index}: {item: T; index: number}) => React.ReactNode;
+    itemLayoutLength: number;
 
-    width: number;
-    height: number;
+    width?: number | 'auto' | `${number}%`;
+    height?: number | 'auto' | `${number}%`;
 
     direction?: Direction;
-
+    scrollAnimationLimit?: number;
     keyExtractor?: (item: T, index: number) => string;
     autoScroll?: boolean;
     interval?: number;
@@ -33,6 +34,8 @@ export function SnapView<T>({
     renderItem,
     width,
     height,
+    itemLayoutLength,
+    scrollAnimationLimit = 12,
     direction = 'horizontal',
     autoScroll = false,
     interval = 3000,
@@ -43,6 +46,10 @@ export function SnapView<T>({
     scrollIndex = 0,
     ...flatListProps
 }: SnapViewProps<T>) {
+
+    width = direction === 'horizontal' ? itemLayoutLength : width ?? 'auto';
+    height = direction === 'vertical' ? itemLayoutLength : height ?? 'auto';
+
     const flatListRef = useRef<FlatList<T>>(null);
     const timerRef = useRef<any>(null);
     const currentIndex = useRef(scrollIndex);
@@ -59,7 +66,7 @@ export function SnapView<T>({
     const scrollTo = (index: number) => {
         flatListRef.current?.scrollToIndex({
             index,
-            animated: true,
+            animated: scrollAnimationLimit >= Math.abs(currentIndex.current - index),
         });
 
         currentIndex.current = index;
@@ -96,9 +103,8 @@ export function SnapView<T>({
         ? event.nativeEvent.contentOffset.x
         : event.nativeEvent.contentOffset.y;
         
-        const size = direction === 'horizontal' ? width : height;
         
-        const index = Math.round(offset / size);
+        const index = Math.round(offset / itemLayoutLength);
         
         currentIndex.current = index;
         setActiveIndex(index);
@@ -111,7 +117,7 @@ export function SnapView<T>({
         return stopAutoScroll;
     }, []);
 
-    useEffect(() => {
+    useEffect(() => { 
         scrollTo(scrollIndex);
     }, [scrollIndex])
     
@@ -127,8 +133,11 @@ export function SnapView<T>({
                 showsHorizontalScrollIndicator={false}
                 showsVerticalScrollIndicator={false}
                 bounces={false}
+                style={{width, height}}
+                contentContainerStyle={{width, height}}
+
                 renderItem={({item, index}) => (
-                    <View style={{width, height}}>
+                    <View style={{width, height, position: 'relative'}}>
                         {renderItem({item, index})}
                     </View>
                 )}
@@ -136,9 +145,8 @@ export function SnapView<T>({
                 onTouchStart={stopAutoScroll}
                 onTouchEnd={startAutoScroll}
                 getItemLayout={(_, index) => ({
-                    length: direction === 'horizontal' ? width : height,
-                    offset:
-                        (direction === 'horizontal' ? width : height) * index,
+                    length: itemLayoutLength,
+                    offset: itemLayoutLength * index,
                     index,
                 })}
             />

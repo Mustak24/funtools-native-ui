@@ -64,6 +64,12 @@ export {
 
     Select,
     type SelectProps,
+
+    CalendarDialog,
+    type CalendarDialogProps,
+
+    DatePicker,
+    type DatePickerProps,
 } from '@components';
 
 export { default as FuntoolsNativeUIProvider } from '../FuntoolsNativeUIProvider';

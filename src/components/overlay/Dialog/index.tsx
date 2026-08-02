@@ -38,7 +38,7 @@ const Dialog: DialogComponent = (props: DialogProps) => {
         maxWidth = Infinity,
         maxHeight = Infinity,
         inlineMargin = 32,
-        blockMargin = '30%',
+        blockMargin = '20%',
         containerProps,
         backdropVariant = 'text-secondary',
         backgroundContent,

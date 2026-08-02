@@ -21,8 +21,7 @@ export function LoadingDialog({ visible, title, subtitles = [] }: LoadingDialogP
                     </ThemeText>
 
                     <SnapView
-                        width={120}
-                        height={20}
+                        itemLayoutLength={20}
                         showDots={false}
                         data={subtitles}
                         direction="vertical"

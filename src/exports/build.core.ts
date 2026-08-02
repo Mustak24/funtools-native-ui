@@ -24,5 +24,11 @@ export {
     type ThemeViewProps,
 
     Input,
-    type InputProps
+    type InputProps,
+
+    MonthCalendarView,
+    type MonthCalendarViewProps,
+
+    MonthSwitcher,
+    type MonthSwitcherProps,
 } from '@core';

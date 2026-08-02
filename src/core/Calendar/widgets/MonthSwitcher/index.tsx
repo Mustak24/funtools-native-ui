@@ -2,25 +2,31 @@ import { Button, IconButton, SnapView } from "@components";
 import { useThemeStore } from "@theme";
 import { View } from "react-native";
 import { MONTHS_SHORTS } from "../../consts";
+import { YearSelector } from "../YearSelectorDialog";
+import { useState } from "react";
 
 export type MonthSwitcherProps = {
-    value: number;
-    onChangeValue: (month: number) => void;
-    onPressMonth?: (month: number) => void;
-    renderLabel?: (month: number, label: string) => string;
+    month: number;
+    year: number;
+    onChangeValue: (value: {month: number, year: number}) => void;
+    onPressMonth?: (value: {month: number, year: number}) => void;
+    disabledYearSelector?: boolean;
 }
 
 export function MonthSwitcher(props: MonthSwitcherProps) {
     let {
-        value = 0,
+        month = 0,
+        year = new Date().getFullYear(),
         onChangeValue,
         onPressMonth,
-        renderLabel
+        disabledYearSelector = false
     } = props;
 
-    value = value % 12;
+    month = month % 12;
 
     const colors = useThemeStore(store => store.colors);
+
+    const [showYearSelector, setShowYearSelector] = useState(false);
 
     return (
         <View
@@ -39,24 +45,29 @@ export function MonthSwitcher(props: MonthSwitcherProps) {
                 color="text"
                 size={32}
                 icon="ChevronLeft"
-                onPress={() => onChangeValue(value === 0 ? 11 : value - 1)}
+                onPress={() => onChangeValue(month === 0 ? {month: 11, year: year - 1} : {month: month - 1, year})}
             />
 
             <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}} >
                 <SnapView
-                    scrollIndex={value}
-                    onScrollIndexChange={onChangeValue}
+                    scrollIndex={month}
+                    scrollEnabled={false}
+                    pointerEvents="box-none"
                     data={MONTHS_SHORTS}
+                    itemLayoutLength={120}
                     height={32}
-                    width={120}
-                    initialScrollIndex={value}
+                    initialScrollIndex={month}
+                    keyExtractor={item => item}
                     renderItem={({item, index}) => (
                         <Button
                             variant="text"
                             color="text"
                             height={32}
-                            title={renderLabel?.(index, item) ?? item}
-                            onPress={() => onPressMonth?.(index)}
+                            title={`${item}, ${year}`}
+                            onPress={() => {
+                                onPressMonth?.({month: index, year});
+                                if(!disabledYearSelector) setShowYearSelector(true);
+                            }}
                             titleProps={{style: {fontWeight: 'semibold'}}}
                         />
                     )}
@@ -68,7 +79,16 @@ export function MonthSwitcher(props: MonthSwitcherProps) {
                 color="text"
                 size={32}
                 icon="ChevronRight"
-                onPress={() => onChangeValue(value === 11 ? 0 : value + 1)}
+                onPress={() => onChangeValue(month === 11 ? {month: 0, year: year + 1} : {month: month + 1, year})}
+            />
+
+            <YearSelector
+                visible={showYearSelector}
+                onClose={() => setShowYearSelector(false)}
+                
+                month={month}
+                year={year}
+                onSelect={({month, year}) => onChangeValue({month, year})}
             />
         </View>
     )

@@ -17,28 +17,35 @@ export function CalendarDialog(props: CalendarDialogProps) {
     const {
         onSelect,
         value = new Date(),
-        min = new Date(value.getFullYear() - 30, 0),
-        max = new Date(value.getFullYear() + 30, 11),
+        min = new Date(new Date().getFullYear() - 50, 0),
+        max = new Date(new Date().getFullYear() + 50, 11),
         ...dialogProps
     } = props;
 
-    const [date, setDate] = useState(value);
+    const [selectedDate, setSelectedDate] = useState(value);
 
-    const yy = date.getFullYear(), mm = date.getMonth(), dd = date.getDate();
+    const [visibleMonth, setVisibleMonth] = useState({
+        year: value.getFullYear(),
+        month: value.getMonth(),
+    });
 
-    const YEARS = useMemo(() => {
-        const YEARS = [];
+    const yy = selectedDate.getFullYear(), mm = selectedDate.getMonth(), dd = selectedDate.getDate();
+ 
+    const {YEARS, scrollIndexMap} = useMemo(() => {
+        const YEARS = [], scrollIndexMap = new Map<string, number>();
         let year = min.getFullYear();
         for(let i=0; i<(max.getFullYear() - min.getFullYear()) * 12; i++) {
             if(i % 12 === 0) year += 1;
             YEARS.push({year, month: i % 12});
+            scrollIndexMap.set(`${year}-${i % 12}`, i);
         }
-        return YEARS;
+        return {YEARS, scrollIndexMap};
     }, [min, max]);
     
 
     return (
-        <Dialog {...dialogProps} 
+        <Dialog 
+            {...dialogProps} 
             maxWidth={440}
         >
             <Dialog.Header
@@ -55,42 +62,39 @@ export function CalendarDialog(props: CalendarDialogProps) {
                 </ThemeText>
 
                 <MonthSwitcher
-                    value={mm}
-                    onChangeValue={mon => setDate(new Date(yy, mon, dd))}
-                    renderLabel={(_, label) => `${label}, ${yy}`}
+                    month={visibleMonth.month}
+                    year={visibleMonth.year}
+                    onChangeValue={({month, year}) => setVisibleMonth({month, year})}
                 />
             </Dialog.Header>
 
-            <Dialog.Content>
-                <View style={{width: '100%', alignItems: 'center'}} >
-                    <SnapView
-                        data={YEARS}
-                        windowSize={3}
-                        removeClippedSubviews={true}
-                        initialNumToRender={1}
-                        maxToRenderPerBatch={2}
+            <View style={{width: '100%', alignItems: 'center'}} >
+                <SnapView
+                    data={YEARS}
+                    windowSize={3}
+                    removeClippedSubviews={true}
+                    initialNumToRender={1}
+                    maxToRenderPerBatch={2}
+                    itemLayoutLength={44 * 7 + 12}
+                    initialScrollIndex={scrollIndexMap.get(`${value.getFullYear()}-${value.getMonth()}`)}
+                    scrollIndex={scrollIndexMap.get(`${visibleMonth.year}-${visibleMonth.month}`)}
+                    
+                    onScrollIndexChange={idx => {
+                        const {year, month} = YEARS[idx];
+                        setVisibleMonth({...visibleMonth, year, month});
+                    }}
 
-                        width={(44 * 7 + 12)}
-                        height={44 * 7 + 12}
-                        initialScrollIndex={YEARS.findIndex(info => info.year === yy && info.month === mm)}
-                        scrollIndex={YEARS.findIndex(info => info.year === yy && info.month === mm)}
-                        
-                        onScrollIndexChange={idx => {
-                            const {year, month} = YEARS[idx];
-                            setDate(new Date(year, month, dd));
-                        }}
-
-                        renderItem={({item}) => (
-                            <MonthCalendarView
-                                value={date}
-                                onChangeValue={setDate}
-                                month={item.month}
-                                year={item.year}
-                            />
-                        )}
-                    />
-                </View>
-            </Dialog.Content>
+                    keyExtractor={item => `${item.year}-${item.month}`}
+                    renderItem={({item}) => (
+                        <MonthCalendarView
+                            value={selectedDate}
+                            onChangeValue={setSelectedDate}
+                            month={item.month}
+                            year={item.year}
+                        />
+                    )}
+                />
+            </View>
 
             <Dialog.Footer>
                 <Button
@@ -105,7 +109,7 @@ export function CalendarDialog(props: CalendarDialogProps) {
                     color="text"
                     title="Select"
                     onPress={() => {
-                        onSelect?.(date); 
+                        onSelect?.(selectedDate); 
                         props.onClose?.()
                     }}
                 />

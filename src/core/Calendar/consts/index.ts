@@ -1,5 +1,5 @@
 export const MONTHS_SHORTS = [
-    'Jun',
+    'Jan',
     'Feb',
     'Mar',
     'Apr',
