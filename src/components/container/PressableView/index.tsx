@@ -23,8 +23,8 @@ export function PressableView(props: PressableViewProps) {
             color={color}
             rippleScale={rippleScale}
             style={{
+                backgroundColor: customColor ? toRgba(customColor, alpha) : toRgba(colors[color], alpha),
                 ...props.style,
-                backgroundColor: customColor ? toRgba(customColor, alpha) : toRgba(colors[color], alpha)
             }}
         />
     )

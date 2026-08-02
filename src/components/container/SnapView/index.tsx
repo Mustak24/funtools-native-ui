@@ -2,6 +2,7 @@ import { ThemeView } from '@core';
 import React, {useEffect, useRef, useState} from 'react';
 import {
     FlatList,
+    FlatListProps,
     NativeScrollEvent,
     NativeSyntheticEvent,
     View,
@@ -9,21 +10,23 @@ import {
 
 type Direction = 'horizontal' | 'vertical';
 
-export type SnapViewProps<T> = {
+export type SnapViewProps<T> = FlatListProps<T> & {
     data: T[];
     renderItem: ({item, index}: {item: T; index: number}) => React.ReactNode;
+    itemLayoutLength: number;
 
-    width: number;
-    height: number;
+    width?: number | 'auto' | `${number}%`;
+    height?: number | 'auto' | `${number}%`;
 
     direction?: Direction;
-
+    scrollAnimationLimit?: number;
+    keyExtractor?: (item: T, index: number) => string;
     autoScroll?: boolean;
     interval?: number;
     showDots?: boolean;
     loop?: boolean;
-    initialIndex?: number;
-    onIndexChange?: (index: number) => void;
+    onScrollIndexChange?: (index: number) => void;
+    scrollIndex?: number;
 }
 
 export function SnapView<T>({
@@ -31,19 +34,35 @@ export function SnapView<T>({
     renderItem,
     width,
     height,
+    itemLayoutLength,
+    scrollAnimationLimit = 12,
     direction = 'horizontal',
-    autoScroll = true,
+    autoScroll = false,
     interval = 3000,
-    showDots = true,
+    showDots = false,
     loop = true,
-    initialIndex = 0,
-    onIndexChange,
+    onScrollIndexChange,
+    keyExtractor,
+    scrollIndex,
+    ...flatListProps
 }: SnapViewProps<T>) {
+
+    width = direction === 'horizontal' ? itemLayoutLength : width ?? 'auto';
+    height = direction === 'vertical' ? itemLayoutLength : height ?? 'auto';
+    
+    const defaultScrollIndex = (
+        typeof scrollIndex === 'number' && 
+        scrollIndex >= 0 && data && 
+        scrollIndex < data.length
+    ) ? scrollIndex : (
+        flatListProps.initialScrollIndex ?? 0
+    );
+
     const flatListRef = useRef<FlatList<T>>(null);
     const timerRef = useRef<any>(null);
-    const currentIndex = useRef(initialIndex);
+    const currentIndex = useRef(defaultScrollIndex);
 
-    const [activeIndex, setActiveIndex] = useState(initialIndex);
+    const [activeIndex, setActiveIndex] = useState(defaultScrollIndex);
 
     const stopAutoScroll = () => {
         if (timerRef.current) {
@@ -53,14 +72,15 @@ export function SnapView<T>({
     };
 
     const scrollTo = (index: number) => {
+        if (typeof index !== 'number' || index < 0 || (data && index >= data.length)) return;
         flatListRef.current?.scrollToIndex({
             index,
-            animated: true,
+            animated: scrollAnimationLimit >= Math.abs(currentIndex.current - index),
         });
 
         currentIndex.current = index;
         setActiveIndex(index);
-        onIndexChange?.(index);
+        onScrollIndexChange?.(index);
     };
 
     const startAutoScroll = () => {
@@ -84,58 +104,62 @@ export function SnapView<T>({
         }, interval);
     };
 
-    useEffect(() => {
-        if (initialIndex > 0) {
-            setTimeout(() => {
-                scrollTo(initialIndex);
-            }, 100);
-        }
-
-        startAutoScroll();
-
-        return stopAutoScroll;
-    }, []);
-
     const onMomentumScrollEnd = (
         event: NativeSyntheticEvent<NativeScrollEvent>,
     ) => {
         const offset =
-            direction === 'horizontal'
-                ? event.nativeEvent.contentOffset.x
-                : event.nativeEvent.contentOffset.y;
-
-        const size = direction === 'horizontal' ? width : height;
-
-        const index = Math.round(offset / size);
-
-        currentIndex.current = index;
-        setActiveIndex(index);
-        onIndexChange?.(index);
+        direction === 'horizontal'
+        ? event.nativeEvent.contentOffset.x
+        : event.nativeEvent.contentOffset.y;
+        
+        
+        const index = Math.round(offset / itemLayoutLength);
+        if (index >= 0 && index < data.length) {
+            currentIndex.current = index;
+            setActiveIndex(index);
+            onScrollIndexChange?.(index);
+        }
     };
 
+
+    useEffect(() => {
+        startAutoScroll();
+        return stopAutoScroll;
+    }, []);
+
+    useEffect(() => { 
+        if (typeof scrollIndex === 'number' && scrollIndex >= 0 && data && scrollIndex < data.length) {
+            scrollTo(scrollIndex);
+        }
+    }, [scrollIndex, data])
+    
     return (
         <View style={{width, height}}>
             <FlatList
+                {...flatListProps}
                 ref={flatListRef}
                 data={data}
                 horizontal={direction === 'horizontal'}
                 pagingEnabled
-                keyExtractor={(_, index) => index.toString()}
+                keyExtractor={keyExtractor ?? ((_, index) => index.toString())}
                 showsHorizontalScrollIndicator={false}
                 showsVerticalScrollIndicator={false}
                 bounces={false}
+                style={{width, height}}
+                contentContainerStyle={flatListProps.contentContainerStyle}
+
                 renderItem={({item, index}) => (
-                    <View style={{width, height}}>
+                    <View style={{width, height, position: 'relative'}}>
                         {renderItem({item, index})}
                     </View>
                 )}
+                
                 onMomentumScrollEnd={onMomentumScrollEnd}
                 onTouchStart={stopAutoScroll}
                 onTouchEnd={startAutoScroll}
                 getItemLayout={(_, index) => ({
-                    length: direction === 'horizontal' ? width : height,
-                    offset:
-                        (direction === 'horizontal' ? width : height) * index,
+                    length: itemLayoutLength,
+                    offset: itemLayoutLength * index,
                     index,
                 })}
             />
