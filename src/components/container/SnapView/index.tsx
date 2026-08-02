@@ -43,18 +43,26 @@ export function SnapView<T>({
     loop = true,
     onScrollIndexChange,
     keyExtractor,
-    scrollIndex = 0,
+    scrollIndex,
     ...flatListProps
 }: SnapViewProps<T>) {
 
     width = direction === 'horizontal' ? itemLayoutLength : width ?? 'auto';
     height = direction === 'vertical' ? itemLayoutLength : height ?? 'auto';
+    
+    const defaultScrollIndex = (
+        typeof scrollIndex === 'number' && 
+        scrollIndex >= 0 && data && 
+        scrollIndex < data.length
+    ) ? scrollIndex : (
+        flatListProps.initialScrollIndex ?? 0
+    );
 
     const flatListRef = useRef<FlatList<T>>(null);
     const timerRef = useRef<any>(null);
-    const currentIndex = useRef(scrollIndex);
+    const currentIndex = useRef(defaultScrollIndex);
 
-    const [activeIndex, setActiveIndex] = useState(scrollIndex);
+    const [activeIndex, setActiveIndex] = useState(defaultScrollIndex);
 
     const stopAutoScroll = () => {
         if (timerRef.current) {
@@ -64,6 +72,7 @@ export function SnapView<T>({
     };
 
     const scrollTo = (index: number) => {
+        if (typeof index !== 'number' || index < 0 || (data && index >= data.length)) return;
         flatListRef.current?.scrollToIndex({
             index,
             animated: scrollAnimationLimit >= Math.abs(currentIndex.current - index),
@@ -105,10 +114,11 @@ export function SnapView<T>({
         
         
         const index = Math.round(offset / itemLayoutLength);
-        
-        currentIndex.current = index;
-        setActiveIndex(index);
-        onScrollIndexChange?.(index);
+        if (index >= 0 && index < data.length) {
+            currentIndex.current = index;
+            setActiveIndex(index);
+            onScrollIndexChange?.(index);
+        }
     };
 
 
@@ -118,8 +128,10 @@ export function SnapView<T>({
     }, []);
 
     useEffect(() => { 
-        scrollTo(scrollIndex);
-    }, [scrollIndex])
+        if (typeof scrollIndex === 'number' && scrollIndex >= 0 && data && scrollIndex < data.length) {
+            scrollTo(scrollIndex);
+        }
+    }, [scrollIndex, data])
     
     return (
         <View style={{width, height}}>
@@ -134,13 +146,14 @@ export function SnapView<T>({
                 showsVerticalScrollIndicator={false}
                 bounces={false}
                 style={{width, height}}
-                contentContainerStyle={{width, height}}
+                contentContainerStyle={flatListProps.contentContainerStyle}
 
                 renderItem={({item, index}) => (
                     <View style={{width, height, position: 'relative'}}>
                         {renderItem({item, index})}
                     </View>
                 )}
+                
                 onMomentumScrollEnd={onMomentumScrollEnd}
                 onTouchStart={stopAutoScroll}
                 onTouchEnd={startAutoScroll}

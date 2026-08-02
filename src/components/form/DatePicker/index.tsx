@@ -17,26 +17,30 @@ export function DatePicker(props: DatePickerProps) {
         ...inputProps
     } = props;
 
+    const safeValue = value instanceof Date && !isNaN(value.getTime()) ? value : new Date();
     const [isOpen, setIsOpen] = useState(false);
 
     return (
         <Fragment>
             <TextInput
                 {...inputProps}
-                value={`${value.getDate()} ${MONTHS_SHORTS[value.getMonth()]}, ${value.getFullYear()}`}
+                value={`${safeValue.getDate()} ${MONTHS_SHORTS[safeValue.getMonth()]}, ${safeValue.getFullYear()}`}
                 postChild={inputProps?.postChild ?? <Icon name="ChevronDown"/>}
                 pointerEvents="none"
                 containerProps={{
                     ...inputProps?.containerProps,
                     children: (
-                        <Pressable
-                            disabled={inputProps.disabled}
-                            style={{position: 'absolute', inset: 0, zIndex: 10, width: '100%', height: '100%'}}
-                            onPress={() => {
-                                if(inputProps.disabled) return;
-                                setIsOpen(true);
-                            }}
-                        />
+                        <Fragment>
+                            {inputProps?.containerProps?.children}
+                            <Pressable
+                                disabled={inputProps.disabled}
+                                style={{position: 'absolute', inset: 0, zIndex: 10, width: '100%', height: '100%'}}
+                                onPress={() => {
+                                    if(inputProps.disabled) return;
+                                    setIsOpen(true);
+                                }}
+                            />
+                        </Fragment>
                     )
                 }}
             />
@@ -45,7 +49,7 @@ export function DatePicker(props: DatePickerProps) {
                 visible={isOpen}
                 onClose={() => setIsOpen(false)}
 
-                value={value}
+                value={safeValue}
                 onSelect={onChangeValue}
             />
         </Fragment>

@@ -31,7 +31,7 @@ export function MonthCalendarView(props: MonthCalendarViewProps) {
         <ThemeView style={{gap: 2}} >
             <View style={{flexDirection: 'row', gap: 2}} >
                 {
-                    ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fir', 'Sat'].map((day) => (
+                    ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
                         <View
                             key={day}
                             style={{

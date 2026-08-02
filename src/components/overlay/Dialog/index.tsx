@@ -47,8 +47,6 @@ const Dialog: DialogComponent = (props: DialogProps) => {
         ...modalProps
     } = props;
 
-    blockSystemCloseRequest = blockSystemCloseRequest === undefined || blockSystemCloseRequest;
-
     if(animationConfig?.speed) animationConfig.speed = 5;
     if(animationConfig?.bounciness) animationConfig.bounciness = 20;
 

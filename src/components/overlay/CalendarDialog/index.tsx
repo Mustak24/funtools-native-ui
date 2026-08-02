@@ -1,9 +1,10 @@
 import { MonthCalendarView, MONTHS_SHORTS, MonthSwitcher, ThemeText } from "@core";
 import { Dialog, DialogProps } from "../Dialog";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "../../primitives";
 import { View } from "react-native";
 import { SnapView } from "../../container";
+import { PanelSwitcher } from "../../logic";
 
 export type CalendarDialogProps = DialogProps & {
     value?: Date;
@@ -14,34 +15,35 @@ export type CalendarDialogProps = DialogProps & {
 }
 
 export function CalendarDialog(props: CalendarDialogProps) {
+    const safeValue = useMemo(() => {
+        return props.value instanceof Date && !isNaN(props.value.getTime()) ? props.value : new Date();
+    }, [props.value]);
+
     const {
         onSelect,
-        value = new Date(),
         min = new Date(new Date().getFullYear() - 50, 0),
         max = new Date(new Date().getFullYear() + 50, 11),
         ...dialogProps
     } = props;
 
-    const [selectedDate, setSelectedDate] = useState(value);
+    const [selectedDate, setSelectedDate] = useState(safeValue);
 
     const [visibleMonth, setVisibleMonth] = useState({
-        year: value.getFullYear(),
-        month: value.getMonth(),
+        year: safeValue.getFullYear(),
+        month: safeValue.getMonth(),
     });
 
-    const yy = selectedDate.getFullYear(), mm = selectedDate.getMonth(), dd = selectedDate.getDate();
- 
-    const {YEARS, scrollIndexMap} = useMemo(() => {
-        const YEARS = [], scrollIndexMap = new Map<string, number>();
-        let year = min.getFullYear();
-        for(let i=0; i<(max.getFullYear() - min.getFullYear()) * 12; i++) {
-            if(i % 12 === 0) year += 1;
-            YEARS.push({year, month: i % 12});
-            scrollIndexMap.set(`${year}-${i % 12}`, i);
+    useEffect(() => {
+        if (dialogProps.visible) {
+            setSelectedDate(safeValue);
+            setVisibleMonth({
+                year: safeValue.getFullYear(),
+                month: safeValue.getMonth(),
+            });
         }
-        return {YEARS, scrollIndexMap};
-    }, [min, max]);
-    
+    }, [dialogProps.visible, safeValue]);
+
+    const yy = selectedDate.getFullYear(), mm = selectedDate.getMonth(), dd = selectedDate.getDate();
 
     return (
         <Dialog 
@@ -69,30 +71,11 @@ export function CalendarDialog(props: CalendarDialogProps) {
             </Dialog.Header>
 
             <View style={{width: '100%', alignItems: 'center'}} >
-                <SnapView
-                    data={YEARS}
-                    windowSize={3}
-                    removeClippedSubviews={true}
-                    initialNumToRender={1}
-                    maxToRenderPerBatch={2}
-                    itemLayoutLength={44 * 7 + 12}
-                    initialScrollIndex={scrollIndexMap.get(`${value.getFullYear()}-${value.getMonth()}`)}
-                    scrollIndex={scrollIndexMap.get(`${visibleMonth.year}-${visibleMonth.month}`)}
-                    
-                    onScrollIndexChange={idx => {
-                        const {year, month} = YEARS[idx];
-                        setVisibleMonth({...visibleMonth, year, month});
-                    }}
-
-                    keyExtractor={item => `${item.year}-${item.month}`}
-                    renderItem={({item}) => (
-                        <MonthCalendarView
-                            value={selectedDate}
-                            onChangeValue={setSelectedDate}
-                            month={item.month}
-                            year={item.year}
-                        />
-                    )}
+                <MonthCalendarView
+                    value={selectedDate}
+                    onChangeValue={setSelectedDate}
+                    month={visibleMonth.month}
+                    year={visibleMonth.year}
                 />
             </View>
 

@@ -9,7 +9,7 @@ export type MonthSwitcherProps = {
     month: number;
     year: number;
     onChangeValue: (value: {month: number, year: number}) => void;
-    onPressMonth?: (value: {month: number, year: number}) => void;
+    onPressMonth?: () => void;
     disabledYearSelector?: boolean;
 }
 
@@ -49,28 +49,16 @@ export function MonthSwitcher(props: MonthSwitcherProps) {
             />
 
             <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}} >
-                <SnapView
-                    scrollIndex={month}
-                    scrollEnabled={false}
-                    pointerEvents="box-none"
-                    data={MONTHS_SHORTS}
-                    itemLayoutLength={120}
+                <Button
+                    variant="text"
+                    color="text"
                     height={32}
-                    initialScrollIndex={month}
-                    keyExtractor={item => item}
-                    renderItem={({item, index}) => (
-                        <Button
-                            variant="text"
-                            color="text"
-                            height={32}
-                            title={`${item}, ${year}`}
-                            onPress={() => {
-                                onPressMonth?.({month: index, year});
-                                if(!disabledYearSelector) setShowYearSelector(true);
-                            }}
-                            titleProps={{style: {fontWeight: 'semibold'}}}
-                        />
-                    )}
+                    title={`${MONTHS_SHORTS[month]}, ${year}`}
+                    titleProps={{style: {fontWeight: 'semibold'}}}
+                    onPress={() => {
+                        onPressMonth?.();
+                        if(!disabledYearSelector) setShowYearSelector(true);
+                    }}
                 />
             </View>
 

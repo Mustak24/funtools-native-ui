@@ -1,8 +1,7 @@
 import { ThemeText } from "../../../ThemeText";
-import { useAnimatedValue } from "@hooks";
-import { useEffect } from "react";
+import { memo } from "react";
 import { useThemeStore } from "@theme";
-import { Animated } from "react-native";
+import { View } from "react-native";
 import { RippleContainer } from "../../../RippleContainer";
 import { toRgba } from "@shared/utils/theme";
 
@@ -15,65 +14,55 @@ export type DateCellProps = {
     value?: Date;
 }
 
-export function DateCell({date, month, year, value, size, onPress}: DateCellProps) {
-
+export const DateCell = memo(function DateCell({date, month, year, value, size, onPress}: DateCellProps) {
     const colors = useThemeStore(store => store.colors);
-    const background = useAnimatedValue(1);
 
-    useEffect(() => {
-        const state = (() => {
-            if(
-                value &&
-                date === value.getDate() && 
-                month === value.getMonth() && 
-                year === value.getFullYear()
-            ) return 3;
+    if (date === null) {
+        return <View style={{ width: size, height: size }} />;
+    }
 
-            if(
-                date === new Date().getDate() && 
-                month === new Date().getMonth() && 
-                year === new Date().getFullYear()
-            ) return 2;
-            
-            return 1;
-        })();
-        
-        const animation = background.timingAnimation({
-            toValue: state, useNativeDriver: false, duration: 100
-        });
+    const isSelected = value &&
+        date === value.getDate() && 
+        month === value.getMonth() && 
+        year === value.getFullYear();
 
-        animation.start();
-        return () => animation.stop();
-    }, [date, value])
+    const isToday = date === new Date().getDate() && 
+        month === new Date().getMonth() && 
+        year === new Date().getFullYear();
+
+    const backgroundColor = isSelected 
+        ? colors.primary 
+        : isToday 
+        ? toRgba(colors["bg-secondary"], 50) 
+        : 'transparent';
+
+    const textColor = isSelected ? colors['bg-secondary'] : colors["text"];
 
     return (
-        <Animated.View  
+        <View  
             style={{
                 position: 'relative',
-                width: size, height: size, 
+                width: size, 
+                height: size, 
                 aspectRatio: 1, 
                 alignItems: 'center', 
                 justifyContent: 'center',
                 borderRadius: 12,
                 overflow: 'hidden',
-                backgroundColor: background.interpolate({
-                    inputRange: [1, 2, 3],
-                    outputRange: ['rgba(0,0,0,0)', toRgba(colors["bg-secondary"], 50), colors.primary]
-                }),
+                backgroundColor
             }} 
         >
             <ThemeText 
-                style={{ position: 'absolute'}} 
-                textColor={background.interpolate({
-                    inputRange: [1, 2, 3],
-                    outputRange: [colors["text"], colors["text"], colors['bg-secondary']]
-                })}    
-            >{date}</ThemeText>
+                style={{ position: 'absolute' }} 
+                textColor={textColor}
+            >
+                {date}
+            </ThemeText>
 
             <RippleContainer 
                 style={{width: '100%', height: '100%'}}
                 onPress={onPress}
             />
-        </Animated.View>
-    )
-}
+        </View>
+    );
+});

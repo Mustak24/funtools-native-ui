@@ -47,7 +47,7 @@ export function YearSelector(props: YearSelectorProps) {
                 initialNumToRender={1}
                 maxToRenderPerBatch={2}
                 width={'100%'}
-                initialScrollIndex={scrollIndexMap.get(year)}
+                initialScrollIndex={scrollIndexMap.get(year) ?? 0}
                 renderItem={({item: yy}) => (
                     <View style={{width: '100%', height: '100%'}} >
                         {
