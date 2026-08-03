@@ -8,7 +8,18 @@ import { Pressable } from "react-native";
 export type DatePickerProps = {
     value: Date;
     onChangeValue: (val: Date) => void;
-} & Pick<TextInputProps, 'label' | 'placeholder' | 'variant' | 'required' | 'disabled' | 'postChild' | 'containerProps'>;
+} & Pick<
+    TextInputProps, 
+    'label' 
+    | 'placeholder' 
+    | 'variant' 
+    | 'required' 
+    | 'disabled' 
+    | 'postChild' 
+    | 'containerProps'
+    | 'errorHandler' 
+    | 'errorMsg'
+>;
 
 export function DatePicker(props: DatePickerProps) {
     const {
